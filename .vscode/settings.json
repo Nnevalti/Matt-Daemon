@@ -3,6 +3,7 @@
 		".env": "plaintext",
 		"iostream": "cpp",
 		"exception": "cpp",
+		"ostream": "cpp",
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
@@ -48,6 +49,8 @@
 		"span": "cpp",
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"ctime": "cpp",
+		"fstream": "cpp"
 	}
 }

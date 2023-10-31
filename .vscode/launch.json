@@ -8,7 +8,7 @@
             "name": "(gdb) Lancer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Matt_deamon",
+            "program": "${workspaceFolder}/Matt_daemon",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
