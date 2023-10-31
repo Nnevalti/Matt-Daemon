@@ -2,6 +2,7 @@
 	"files.associations": {
 		".env": "plaintext",
 		"iostream": "cpp",
-		"exception": "cpp"
+		"exception": "cpp",
+		"ostream": "cpp"
 	}
 }

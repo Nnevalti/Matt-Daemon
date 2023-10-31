@@ -1,6 +1,7 @@
 NAME = Matt_daemon
 
 SRCS =	main.cpp				\
+		lock.cpp				\
 		$(_CLASS)				\
 
 _CLASS =	tintin_reporter.cpp	\
