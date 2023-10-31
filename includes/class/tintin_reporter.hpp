@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tintin_reporter.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 14:04:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 17:49:06 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/10/31 18:43:27 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 // #define LOG_FILE "/var/log/matt_daemon.log"
 
-#define LOG_FILE "matt_daemon.log"
+#define LOG_FILE "/tmp/matt_daemon.log"
 
 class TintinReporter {
 public:

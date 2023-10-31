@@ -2,10 +2,15 @@ NAME = Matt_daemon
 
 SRCS =	main.cpp				\
 		lock.cpp				\
+		daemonize.cpp			\
+		cleanup.cpp				\
 		$(_CLASS)				\
+		$(_UTILS)				\
 
 _CLASS =	tintin_reporter.cpp	\
 			socket.cpp			\
+
+_UTILS =	signals.cpp			\
 
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
@@ -19,7 +24,7 @@ INCLUDES_DIR = includes $(LIBS:%=lib%/includes) $(LIBS:%=lib%)
 LIBS =
 
 MAKE = make
-CC = g++
+CC = c++
 RM = rm -f
 MKDIR = mkdir -p
 DEBUG = off
@@ -31,7 +36,7 @@ ifeq ($(DEBUG), on)
 endif
 LDFLAGS = $(LIBS:%=-L lib%) $(LIBS:%=-l%)
 
-vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class)
+vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class /utils)
 
 all:
 	$(foreach LIB, ${LIBS}, ${MAKE} -C lib${LIB} ;)

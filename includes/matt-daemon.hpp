@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matt-daemon.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 17:26:16 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/10/31 18:50:08 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,14 @@ typedef struct glob {
 extern t_glob g_global;
 
 // LOCK.CPP
-bool handle_lock_file(void);
+bool	lock_file(void);
+
+// DAEMONIZE.CPP
+void	daemonize(std::string path = "/");
+
+// CLEANUP.CPP
+void	cleanup(void);
+
+// Utils
+void	signal_handler(int signum);
+void	init_signals(void);

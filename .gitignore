@@ -33,3 +33,4 @@
 
 Matt_daemon
 .objs/
+.vscode/settings.json
