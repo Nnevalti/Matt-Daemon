@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:48:57 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 18:50:33 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/10/31 19:50:30 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int main()
 		reporter.openLogFile();
 		g_global.logger = &reporter;
 		daemonize();
-		g_global.logger->log("Matt Daemon started.", TintinReporter::INFO);
+		g_global.logger->logInfo("Matt Daemon started.");
 	}
 	catch (std::exception &e) {
 		std::cerr << e.what() << std::endl;
@@ -41,7 +41,7 @@ int main()
 
 	cleanup();
 
-	g_global.logger->log("Matt Daemon stopped.", TintinReporter::INFO);
+	g_global.logger->logInfo("Matt Daemon stopped.");
 
 	return (EXIT_SUCCESS);
 }

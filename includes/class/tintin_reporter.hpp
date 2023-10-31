@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 14:04:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 19:43:22 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/10/31 19:49:41 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,16 +42,22 @@ public:
 	void openLogFile(void);
 
 	enum LogType {
+		LOG,
 		INFO,
 		WARNING,
 		ERROR
 	};
 
-	void log(const std::string &message, const LogType type);
+	void log(const std::string &message, const LogType type = LOG);
+	void logInfo(const std::string &message);
+	void logWarning(const std::string &message);
+	void logError(const std::string &message);
+
 
 private:
 
-	std::array<std::string, 3> logTypeString = {
+	std::array<std::string, 4> _logTypeString = {
+		COLOR_GREEN + "[ LOG ]" + COLOR_RESET,
 		COLOR_BLUE + "[ INFO ]" + COLOR_RESET,
 		COLOR_YELLOW + "[ WARNING ]" + COLOR_RESET,
 		COLOR_RED + "[ ERROR ]" + COLOR_RESET

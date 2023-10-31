@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tintin_reporter.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 14:04:36 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 17:49:21 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/10/31 19:49:46 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ TintinReporter::TintinReporter(TintinReporter const &instance) {
 }
 
 TintinReporter::~TintinReporter() {
-	_file.close();
+	this->_file.close();
 }
 
 TintinReporter &TintinReporter::operator=(TintinReporter const &instance) {
@@ -29,12 +29,24 @@ TintinReporter &TintinReporter::operator=(TintinReporter const &instance) {
 }
 
 void TintinReporter::openLogFile(void) {
-	_file = std::ofstream(LOG_FILE, std::ios_base::app);
-	if (!_file.is_open())
+	this->_file = std::ofstream(LOG_FILE, std::ios_base::app);
+	if (!this->_file.is_open())
 		throw std::runtime_error("TintinReporter: Can't open log file. " + std::string(strerror(errno)));}
 
 void TintinReporter::log(const std::string &message, const LogType type) {
-	_file << getTime() << " " << logTypeString[type] << " " << message << std::endl;
+	this->_file << getTime() << " " << this->_logTypeString[type] << " " << message << std::endl;
+}
+
+void TintinReporter::logInfo(const std::string &message) {
+	this->log(message, INFO);
+}
+
+void TintinReporter::logWarning(const std::string &message) {
+	this->log(message, WARNING);
+}
+
+void TintinReporter::logError(const std::string &message) {
+	this->log(message, ERROR);
 }
 
 std::string TintinReporter::getTime(void) const {

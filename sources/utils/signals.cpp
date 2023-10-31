@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 18:35:54 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 19:29:44 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/10/31 19:50:58 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	signal_handler(int signum)
 		{SIGSTOP, "SIGSTOP"},
 	};
 
-	g_global.logger->log("Signal " + msg[signum] + " received.", TintinReporter::INFO);
+	g_global.logger->logInfo("Signal " + msg[signum] + " received.");
 	g_global.is_running = false;
 }
 
