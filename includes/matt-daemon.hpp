@@ -6,7 +6,7 @@
 /*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 16:32:10 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/10/31 17:26:16 by vdescham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,13 @@
 #include "class/tintin_reporter.hpp"
 
 #define PORT 4242
-#define LOG_FILE "/var/log/matt_daemon.log"
 #define LOCK_FILE "/var/lock/matt_daemon.lock"
 #define MAX_CLIENT 3
 
 typedef struct glob {
+	bool is_running;
 	int fd_lock;
+	TintinReporter *logger;
 } t_glob;
 
 extern t_glob g_global;
