@@ -24,13 +24,12 @@ INCLUDES_DIR = includes $(LIBS:%=lib%/includes) $(LIBS:%=lib%)
 LIBS =
 
 MAKE = make
-CC = c++
+CXX = c++
 RM = rm -f
 MKDIR = mkdir -p
 DEBUG = off
 
-CFLAGS = -MMD -Wall -Wextra -Werror
-CXXFLAGS = $(INCLUDES_DIR:%=-I %)
+CXXFLAGS = $(INCLUDES_DIR:%=-I %) -MMD -Wall -Wextra -Werror -std=c++17
 ifeq ($(DEBUG), on)
 	CXXFLAGS += -g3
 endif
@@ -46,11 +45,11 @@ scan:
 	scan-build $(MAKE)
 
 $(NAME): $(OBJS) | $(LIBS:%=lib%.a)
-	$(CC) $(CXXFLAGS) $^ -o $(NAME) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $^ -o $(NAME) $(LDFLAGS)
 
 -include $(DEPENDENCIES)
 $(OBJS_DIR)/%.o: %.cpp $(OBJS_DIR)/debug$(DEBUG) | $(OBJS_DIR) 
-	$(CC) $(CFLAGS) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@ 
 
 $(OBJS_DIR):
 	$(MKDIR) $(OBJS_DIR)
