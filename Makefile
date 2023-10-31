@@ -5,6 +5,7 @@ SRCS =	main.cpp				\
 		$(_CLASS)				\
 
 _CLASS =	tintin_reporter.cpp	\
+			socket.cpp			\
 
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
