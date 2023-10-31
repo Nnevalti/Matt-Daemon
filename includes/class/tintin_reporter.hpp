@@ -1,20 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   matt-daemon.hpp                                    :+:      :+:    :+:   */
+/*   tintin_reporter.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 14:18:18 by lucocozz         ###   ########.fr       */
+/*   Created: 2023/10/31 14:04:39 by lucocozz          #+#    #+#             */
+/*   Updated: 2023/10/31 14:22:45 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>
-#include <exception>
+class TintinReporter {
+public:
+	explicit TintinReporter();
+	TintinReporter(TintinReporter const &instance);
+	~TintinReporter();
 
-#include "class/tintin_reporter.hpp"
-
-#define PORT 4242
+	TintinReporter &operator=(TintinReporter const &instance);
+};

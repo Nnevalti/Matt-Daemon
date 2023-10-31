@@ -1,9 +1,12 @@
 NAME = Matt_daemon
 
-SRCS =	main.c
+SRCS =	main.cpp				\
+		$(_CLASS)				\
+
+_CLASS =	tintin_reporter.cpp	\
 
 
-OBJS = $(SRCS:%.c=$(OBJS_DIR)/%.o)
+OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
 DEPENDENCIES = $(OBJS:%.o=%.d)
 
 SRCS_DIR = sources
@@ -14,19 +17,19 @@ INCLUDES_DIR = includes $(LIBS:%=lib%/includes) $(LIBS:%=lib%)
 LIBS =
 
 MAKE = make
-CC = gcc
+CC = g++
 RM = rm -f
 MKDIR = mkdir -p
 DEBUG = off
 
-CFLAGS = -lm -MMD -Wall -Wextra -Werror
+CFLAGS = -MMD -Wall -Wextra -Werror
 CXXFLAGS = $(INCLUDES_DIR:%=-I %)
 ifeq ($(DEBUG), on)
 	CXXFLAGS += -g3
 endif
-LDFLAGS = $(LIBS:%=-L lib%) $(LIBS:%=-l%) -lm -lpthread
+LDFLAGS = $(LIBS:%=-L lib%) $(LIBS:%=-l%)
 
-vpath %.c	$(addprefix $(SRCS_DIR), /.)
+vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class)
 
 all:
 	$(foreach LIB, ${LIBS}, ${MAKE} -C lib${LIB} ;)
@@ -39,7 +42,7 @@ $(NAME): $(OBJS) | $(LIBS:%=lib%.a)
 	$(CC) $(CXXFLAGS) $^ -o $(NAME) $(LDFLAGS)
 
 -include $(DEPENDENCIES)
-$(OBJS_DIR)/%.o: %.c $(OBJS_DIR)/debug$(DEBUG) | $(OBJS_DIR) 
+$(OBJS_DIR)/%.o: %.cpp $(OBJS_DIR)/debug$(DEBUG) | $(OBJS_DIR) 
 	$(CC) $(CFLAGS) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@ 
 
 $(OBJS_DIR):
