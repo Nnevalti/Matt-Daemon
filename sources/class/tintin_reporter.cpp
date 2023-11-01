@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 14:04:36 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 19:49:46 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 18:16:20 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,11 @@ TintinReporter::~TintinReporter() {
 
 TintinReporter &TintinReporter::operator=(TintinReporter const &instance) {
 	if (this != &instance)
-		*this = instance;
+		return (*this);
+	if (this->_file.is_open()) {
+    	this->_file.open(LOG_FILE, std::ios_base::app);
+    	this->_file << instance._file.rdbuf();
+	}
 	return (*this);
 }
 

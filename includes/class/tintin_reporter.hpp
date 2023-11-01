@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 14:04:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 19:49:41 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 17:57:17 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ public:
 
 
 private:
+	std::ofstream _file;
 
 	std::array<std::string, 4> _logTypeString = {
 		COLOR_GREEN + "[ LOG ]" + COLOR_RESET,
@@ -62,8 +63,6 @@ private:
 		COLOR_YELLOW + "[ WARNING ]" + COLOR_RESET,
 		COLOR_RED + "[ ERROR ]" + COLOR_RESET
 	};
-
-	std::ofstream _file;
 
 	std::string getTime(void) const;
 };

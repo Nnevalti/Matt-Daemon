@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 15:38:58 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 17:29:50 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/11/01 17:47:07 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,10 +138,8 @@ std::string Socket::recv(int flags)
 		if (size < 1024)
 			break;
 	}
-
 	if (size == -1)
 		throw std::runtime_error("recv: " + std::string(strerror(errno)));
-
 	return (data);
 }
 

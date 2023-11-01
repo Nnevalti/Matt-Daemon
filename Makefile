@@ -4,6 +4,9 @@ SRCS =	main.cpp				\
 		lock.cpp				\
 		daemonize.cpp			\
 		cleanup.cpp				\
+		init_logger.cpp			\
+		init_server.cpp			\
+		run_server.cpp			\
 		$(_CLASS)				\
 		$(_UTILS)				\
 

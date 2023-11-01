@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 15:15:03 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 18:29:13 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@
 #define MAX_CLIENT 3
 
 typedef struct glob {
-	bool is_running;
-	int fd_lock;
-	TintinReporter *logger;
+	bool 			is_running;
+	int				fd_lock;
+	TintinReporter	logger;
 } t_glob;
 
 extern t_glob g_global;
@@ -46,6 +46,15 @@ void	daemonize(std::string path = "/");
 
 // CLEANUP.CPP
 void	cleanup(void);
+
+// INIT_LOGGER.CPP
+void	init_logger(void);
+
+// INIT_SERVER.CPP
+void	init_server(Socket &server);
+
+// RUN_SERVER.CPP
+void	run_server(Socket &server);
 
 // Utils
 void	signal_handler(int signum);
