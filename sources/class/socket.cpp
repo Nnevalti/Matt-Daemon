@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 15:38:58 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 18:02:34 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 16:40:43 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,14 @@ Socket::~Socket(void)
 
 Socket	&Socket::operator=(const Socket &instance)
 {
+	if (this == &instance)
+		return (*this);
 	this->fd = instance.fd;
 	this->family = instance.family;
 	this->type = instance.type;
 	this->protocol = instance.protocol;
+	this->_closed = instance._closed;
+	//! this->_addrinfo = instance._addrinfo;
 	return (*this);
 }
 
@@ -123,18 +127,16 @@ ssize_t	Socket::send(const void *data, size_t size, int flags)
 	return (ret);
 }
 
-ssize_t	Socket::recv(std::string &buffer, size_t size, int flags)
+std::string	Socket::recv(int flags)
 {
-	ssize_t	ret;
-	char	*tmp;
-
-	tmp = new char[size + 1];
-	if ((ret = ::recv(this->fd, tmp, size, flags)) == -1)
-		throw std::runtime_error("recv: " + std::string(strerror(errno)));
-	tmp[ret] = '\0';
-	buffer = tmp;
-	delete[] tmp;
-	return (ret);
+	int size = 0;
+	if (ioctl(fd, SIOCINQ, &size) == -1)
+		size = 2048;
+	std::vector<char> buffer(size);
+	int bytesReceived = ::recv(fd, buffer.data(), size, flags);
+	if (bytesReceived <= 0)
+		throw std::runtime_error(strerror(errno));
+	return (std::string(buffer.data(), bytesReceived));
 }
 
 ssize_t	Socket::recv(void *buffer, size_t size, int flags)
