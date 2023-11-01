@@ -6,7 +6,7 @@
 /*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:48:57 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 15:29:29 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/11/01 16:01:00 by vdescham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_glob g_global = {true, 0, nullptr};
 
-// static void	__check_root(void)
+// static void	__checkRoot(void)
 // {
 // 	if (getuid() != 0) {
 // 		std::cerr << "You must be root to run this program." << std::endl;
@@ -27,7 +27,7 @@ int main()
 	Socket			server;
 	TintinReporter	reporter;
 
-	// __check_root();
+	// __checkRoot();
 
 	try {
 		reporter.openLogFile();
