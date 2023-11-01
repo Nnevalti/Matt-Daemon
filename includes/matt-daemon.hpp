@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matt-daemon.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 18:29:13 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 19:29:09 by vdescham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 
 #include "class/tintin_reporter.hpp"
 #include "class/socket.hpp"
+#include "class/epoll.hpp"
 
 #define PORT 4242
 #define LOCK_FILE "/var/lock/matt_daemon.lock"
@@ -51,10 +52,10 @@ void	cleanup(void);
 void	init_logger(void);
 
 // INIT_SERVER.CPP
-void	init_server(Socket &server);
+void	init_server(Epoll &server);
 
 // RUN_SERVER.CPP
-void	run_server(Socket &server);
+void	run_server(Epoll &server);
 
 // Utils
 void	signal_handler(int signum);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:48:57 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 18:30:04 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 19:25:39 by vdescham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_glob g_global = {true, 0, TintinReporter()};
 
 int main()
 {
-	Socket	server;
+	Epoll			server;
 
 	// __checkRoot();
 	init_logger();
