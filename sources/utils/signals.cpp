@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 18:35:54 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 19:50:58 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 15:12:29 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	signal_handler(int signum)
 
 void	init_signals(void)
 {
+	g_global.logger->logInfo("Signals handler.");
 	signal(SIGINT, signal_handler);
 	signal(SIGTERM, signal_handler);
 	signal(SIGQUIT, signal_handler);

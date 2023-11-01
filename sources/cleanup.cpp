@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 18:34:18 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 18:34:31 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 15:14:57 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	cleanup(void)
 {
+	g_global.logger->logInfo("Quitting.");
 	flock(g_global.fd_lock, LOCK_UN);
 	close(g_global.fd_lock);
 	unlink(LOCK_FILE);

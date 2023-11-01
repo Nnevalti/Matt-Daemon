@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/10/31 18:50:08 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 15:15:03 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <sys/file.h>
 
 #include "class/tintin_reporter.hpp"
+#include "class/socket.hpp"
 
 #define PORT 4242
 #define LOCK_FILE "/var/lock/matt_daemon.lock"
