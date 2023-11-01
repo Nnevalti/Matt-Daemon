@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 15:38:58 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 16:40:43 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 17:29:50 by vdescham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,16 +127,22 @@ ssize_t	Socket::send(const void *data, size_t size, int flags)
 	return (ret);
 }
 
-std::string	Socket::recv(int flags)
+std::string Socket::recv(int flags)
 {
-	int size = 0;
-	if (ioctl(fd, SIOCINQ, &size) == -1)
-		size = 2048;
-	std::vector<char> buffer(size);
-	int bytesReceived = ::recv(fd, buffer.data(), size, flags);
-	if (bytesReceived <= 0)
-		throw std::runtime_error(strerror(errno));
-	return (std::string(buffer.data(), bytesReceived));
+	std::string	data;
+	ssize_t		size = 0;
+	char		buffer[1024];
+
+	while ((size = ::recv(this->fd, buffer, 1024, flags)) > 0) {
+		data.append(buffer, size);
+		if (size < 1024)
+			break;
+	}
+
+	if (size == -1)
+		throw std::runtime_error("recv: " + std::string(strerror(errno)));
+
+	return (data);
 }
 
 ssize_t	Socket::recv(void *buffer, size_t size, int flags)

@@ -6,7 +6,7 @@
 /*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:48:57 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 16:01:00 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/11/01 17:27:07 by vdescham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,25 @@ int main()
 	try {
 		g_global.logger->logInfo("Started.");
 		g_global.logger->logInfo("Creating server.");
+		server.reuseAddr();
 		server.bind("127.0.0.1", PORT + 1);
 		server.listen(MAX_CLIENT);
 		g_global.logger->logInfo("Server started.");
 		daemonize();
 		init_signals();
-		while (g_global.is_running) { sleep(1); }
+		Socket client = server.accept();
+		g_global.logger->logInfo("New client connected.");
+		
+		while (g_global.is_running) {
+			std::string data = client.recv();
+			data.pop_back();
+			if (data == "quit")
+				g_global.is_running = false;
+			g_global.logger->log(data);
+		}
 	}
 	catch (std::exception &e) {
-		std::cerr << e.what() << std::endl;
+		g_global.logger->logError(e.what());
 		cleanup();
 		return (EXIT_FAILURE);
 	}
