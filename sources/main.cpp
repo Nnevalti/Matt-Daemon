@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:48:57 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 15:15:25 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 15:29:29 by vdescham         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,20 @@ int main()
 	TintinReporter	reporter;
 
 	// __check_root();
-	g_global.logger = &reporter;
-	if (lock_file() == false)
-		return(EXIT_FAILURE);
+
 	try {
 		reporter.openLogFile();
+		g_global.logger = &reporter;
+	}
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return (EXIT_FAILURE);
+	}
+
+	if (lock_file() == false)
+		return(EXIT_FAILURE);
+
+	try {
 		g_global.logger->logInfo("Started.");
 		g_global.logger->logInfo("Creating server.");
 		server.bind("127.0.0.1", PORT + 1);
