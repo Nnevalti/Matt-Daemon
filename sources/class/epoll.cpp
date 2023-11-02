@@ -3,82 +3,93 @@
 /*                                                        :::      ::::::::   */
 /*   epoll.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 17:37:53 by vdescham          #+#    #+#             */
-/*   Updated: 2023/11/01 19:30:39 by vdescham         ###   ########.fr       */
+/*   Created: 2023/11/02 14:26:34 by lucocozz          #+#    #+#             */
+/*   Updated: 2023/11/02 14:40:42 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "class/epoll.hpp"
-#include "matt-daemon.hpp"
 
-Epoll::Epoll() {}
-
-void Epoll::create() {
-	_epfd = epoll_create1(0);
-	if (_epfd == -1) {
-		g_global.logger.logError("epoll_create1: " + std::string(strerror(errno)));
+Epoll::Epoll(int max_events) : _max_events(max_events), _closed(false)
+{
+	this->_fd = epoll_create1(0);
+	if (this->_fd == -1)
 		throw std::runtime_error("epoll_create1: " + std::string(strerror(errno)));
-	}
-	_event.data.fd = this->fd;
-	_event.events = EPOLLIN;
-	epoll_ctl(_epfd, EPOLL_CTL_ADD, this->fd, &_event);
+	this->_events = new epoll_event[this->_max_events];
+	if (this->_events == NULL)
+		throw std::runtime_error("new: " + std::string(strerror(errno)));
 }
 
-int Epoll::wait() {
-	if ((nfds = epoll_wait(_epfd, this->_events_pool, MAX_EV, -1)) == -1) {
-		g_global.logger.logError("epoll_wait: " + std::string(strerror(errno)));
-		throw std::runtime_error("epoll_wait: " + std::string(strerror(errno)));
-	}
-	return (nfds);
+Epoll::~Epoll()
+{
+	this->close();
+	delete[] this->_events;
 }
 
-void Epoll::acceptClient() {
-	int new_socket = 0;
-
-	if ((new_socket = ::accept(fd, NULL, NULL)) == -1) {
-		g_global.logger.logError("accept: " + std::string(strerror(errno)));
-		throw std::runtime_error("accept: " + std::string(strerror(errno)));
-	}
-	g_global.logger.logInfo("New client connected. epoll");
-	fcntl(new_socket, F_SETFL, O_NONBLOCK);
-	_event.data.fd = new_socket;
-	_event.events = EPOLLIN;
-	epoll_ctl(_epfd, EPOLL_CTL_ADD, new_socket, &_event);
-}
-
-void Epoll::recvDataFromClient(int index) {
-	int recv_len = 0;
-	char request[1024];
+void	Epoll::subscribe(int fd, uint32_t events)
+{
+	epoll_event event;
 	
-	if ((recv_len = ::recv(this->_events_pool[index].data.fd, &request, 1023, 0)) < 0) {
-		g_global.logger.logError("recv: " + std::string(strerror(errno)));
-	}
-	else if (recv_len == 0) {
-		g_global.logger.logInfo("Client disconnected.");
-		::close(this->_events_pool[index].data.fd);
-		epoll_ctl(_epfd, EPOLL_CTL_DEL, this->_events_pool[index].data.fd, NULL);
-	}
-	else {
-		request[recv_len - 1] = '\0';
-		g_global.logger.logInfo("Received: " + std::string(request));
-	}
+	if (this->_closed)
+		throw std::runtime_error("Epoll is closed");
+	event.events = events;
+	event.data.fd = fd;
+	if (epoll_ctl(this->_fd, EPOLL_CTL_ADD, fd, &event) == -1)
+		throw std::runtime_error("epoll_ctl(EPOLL_CTL_ADD): " + std::string(strerror(errno)));
 }
 
-void Epoll::poll() {
-	int nfds = this->wait();
+void	Epoll::unsubscribe(int fd)
+{
+	if (this->_closed)
+		throw std::runtime_error("Epoll is closed");
+	
+	if (epoll_ctl(this->_fd, EPOLL_CTL_DEL, fd, NULL) == -1)
+		throw std::runtime_error("epoll_ctl(EPOLL_CTL_DEL): " + std::string(strerror(errno)));
+}
 
-	for (int i = 0; i < nfds; i++) {
-		if (this->_events_pool[i].events & (EPOLLHUP | EPOLLERR))
-		{
-			g_global.logger.logError("epoll_wait: " + std::string(strerror(errno)));
-			::close(this->_events_pool[i].data.fd);
-			continue;
-		}
-		if (this->_events_pool[i].data.fd == this->fd)
-			this->acceptClient();
-		else if (this->_events_pool[i].events & EPOLLIN)
-			this->recvDataFromClient(i);
-	}
+void	Epoll::modify(int fd, uint32_t events)
+{
+	epoll_event event;
+	
+	if (this->_closed)
+		throw std::runtime_error("Epoll is closed");
+	event.events = events;
+	event.data.fd = fd;
+	if (epoll_ctl(this->_fd, EPOLL_CTL_MOD, fd, &event) == -1)
+		throw std::runtime_error("epoll_ctl(EPOLL_CTL_MOD): " + std::string(strerror(errno)));
+}
+
+Epoll::Events	Epoll::poll(int timeout)
+{
+	if (this->_closed)
+		throw std::runtime_error("Epoll is closed");
+	int		nb_events;
+	nb_events = epoll_wait(this->_fd, this->_events, this->_max_events, timeout);
+	if (nb_events == -1)
+		throw std::runtime_error("epoll_wait: " + std::string(strerror(errno)));
+	Events	events;
+	for (int i = 0; i < nb_events; i++)
+		events.push_back(std::make_pair(this->_events[i].data.fd, this->_events[i].events));
+	return (events);
+}
+
+void	Epoll::close(void)
+{
+	if (this->_closed)
+		return ;
+	this->_closed = true;
+	if (::close(this->_fd) == -1)
+		throw std::runtime_error("close: " + std::string(strerror(errno)));
+}
+
+bool	Epoll::closed(void)
+{
+	return (this->_closed);
+}
+
+int	Epoll::fileno(void)
+{
+	return (this->_fd);
 }

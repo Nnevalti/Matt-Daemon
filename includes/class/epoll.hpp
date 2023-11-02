@@ -3,34 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   epoll.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 17:39:57 by vdescham          #+#    #+#             */
-/*   Updated: 2023/11/01 19:30:11 by vdescham         ###   ########.fr       */
+/*   Created: 2023/11/01 19:48:13 by lucocozz          #+#    #+#             */
+/*   Updated: 2023/11/02 14:31:28 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "socket.hpp"
 #include <sys/epoll.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <exception>
+#include <stdexcept>
+#include <list>
+#include <cstring>
 
-#define MAX_EV 42
+class Epoll {
 
-class Epoll: public Socket {
-public:
-	Epoll();
-	void create();
-	void poll();
-	int wait();
-	void acceptClient();
-	void recvDataFromClient(int index);
-
-
-	int timeout = 200; // set timeout to 0.5 sec
-	int nfds = 0;
 private:
-	int						_epfd;
-	struct epoll_event		_event;
-	struct epoll_event		_events_pool[MAX_EV];
+	int			_fd;
+	int			_max_events;
+	bool		_closed;
+	epoll_event	*_events;
+
+
+public:
+	typedef typename std::list<std::pair<int, int> >	Events;
+	
+	Epoll(int max_events = 20);
+	~Epoll();
+	void	subscribe(int fd, uint32_t events = 0);
+	void	unsubscribe(int fd);
+	void	modify(int fd, uint32_t events = 0);
+	Events	poll(int timeout = -1);
+	void	close(void);
+	bool	closed(void);
+	int	fileno(void);
 };

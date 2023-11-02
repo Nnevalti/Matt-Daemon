@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   matt-daemon.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vdescham <vdescham@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 19:29:09 by vdescham         ###   ########.fr       */
+/*   Updated: 2023/11/02 14:32:55 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 #include <iostream>
 #include <exception>
 #include <string>
+#include <map>
+#include <memory>
+
 #include <unistd.h>
 #include <signal.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -52,10 +54,10 @@ void	cleanup(void);
 void	init_logger(void);
 
 // INIT_SERVER.CPP
-void	init_server(Epoll &server);
+void	init_server(Socket &server);
 
 // RUN_SERVER.CPP
-void	run_server(Epoll &server);
+void	run_server(Socket &server);
 
 // Utils
 void	signal_handler(int signum);

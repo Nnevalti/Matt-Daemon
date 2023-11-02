@@ -6,7 +6,7 @@
 /*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/31 14:49:25 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 16:39:13 by lucocozz         ###   ########.fr       */
+/*   Updated: 2023/11/01 22:38:52 by lucocozz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,10 @@ public:
 	int protocol;
 	int	fd;
 
+	typedef typename std::pair<std::string, ssize_t>	RecvData;
+
 	explicit Socket(int family = AF_INET, int type = SOCK_STREAM, int protocol = IPPROTO_IP, int fd = -1);
-	explicit Socket(int fd);
+	explicit Socket(const int fd);
 	Socket(const Socket &instance);
 	~Socket();
 
@@ -56,7 +58,7 @@ public:
 	void		connect(const std::string &host, std::string port);
 	ssize_t		send(const std::string &msg, int flags = 0);
 	ssize_t		send(const void *data, size_t size, int flags = 0);
-	std::string	recv(int flags = 0);
+	RecvData	recv(int flags = 0);
 	ssize_t		recv(void *buffer, size_t size, int flags = 0);
 	void		close(void);
 	void		setNonBlocking(void);
@@ -64,4 +66,7 @@ public:
 	void		setSockOpt(int level, int optname, int optval);
 	void		shutdown(int how = SHUT_RDWR);
 	void		reuseAddr(void);
+
+	bool		operator==(const Socket &instance) const;
+	bool		operator==(const int &fd) const;
 };

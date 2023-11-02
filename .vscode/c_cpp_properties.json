@@ -6,12 +6,14 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/includes/class",
                 "${workspaceFolder}/includes",
+                "${workspaceFolder}/includes",
+                "${workspaceFolder}/includes",
                 "${workspaceFolder}/includes"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",
-            "cppStandard": "c++14",
+            "cppStandard": "c++20",
             "intelliSenseMode": "linux-clang-x64",
             "configurationProvider": "ms-vscode.makefile-tools"
         }

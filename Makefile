@@ -33,7 +33,7 @@ RM = rm -f
 MKDIR = mkdir -p
 DEBUG = off
 
-CXXFLAGS = $(INCLUDES_DIR:%=-I %) -MMD -Wall -Wextra -Werror -std=c++17
+CXXFLAGS = $(INCLUDES_DIR:%=-I %) -MMD -Wall -Wextra -Werror -std=c++20
 ifeq ($(DEBUG), on)
 	CXXFLAGS += -g3
 endif
