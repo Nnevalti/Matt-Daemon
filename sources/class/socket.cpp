@@ -205,7 +205,7 @@ void	Socket::shutdown(int how)
 		throw std::runtime_error("shutdown: " + std::string(strerror(errno)));
 }
 
-void	Socket::reuseAddr(void)
+void	Socket::reuseAddress(void)
 {
 	int	optval;
 
@@ -215,7 +215,7 @@ void	Socket::reuseAddr(void)
 
 bool Socket::operator==(const Socket &instance) const
 {
-	return (this->fd == instance.fd);
+	return (this->operator==(instance.fd));
 }
 
 bool	Socket::operator==(const int &fd) const

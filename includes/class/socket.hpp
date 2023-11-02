@@ -53,7 +53,7 @@ public:
 	void		setBlocking(void);
 	void		setSockOpt(int level, int optname, int optval);
 	void		shutdown(int how = SHUT_RDWR);
-	void		reuseAddr(void);
+	void		reuseAddress(void);
 
 	bool		operator==(const Socket &instance) const;
 	bool		operator==(const int &fd) const;
