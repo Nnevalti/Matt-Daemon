@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   matt-daemon.hpp                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/31 13:49:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/02 14:32:55 by lucocozz         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <iostream>
@@ -41,24 +29,19 @@ typedef struct glob {
 
 extern t_glob g_global;
 
-// LOCK.CPP
-bool	lock_file(void);
 
-// DAEMONIZE.CPP
-void	daemonize(std::string path = "/");
-
-// CLEANUP.CPP
-void	cleanup(void);
-
-// INIT_LOGGER.CPP
-void	init_logger(void);
-
-// INIT_SERVER.CPP
-void	init_server(Socket &server);
-
-// RUN_SERVER.CPP
+// Server
 void	run_server(Socket &server);
 
+// Setup
+void	cleanup(void);
+void	init_logger(void);
+void	init_server(Socket &server);
+
+
 // Utils
+bool	lock_file(void);
 void	signal_handler(int signum);
 void	init_signals(void);
+void	checkRoot(void);
+void	daemonize(std::string path = "/");

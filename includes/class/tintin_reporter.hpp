@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tintin_reporter.hpp                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/31 14:04:39 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 17:57:17 by lucocozz         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <iostream>
@@ -21,9 +9,7 @@
 #include <errno.h>
 #include <string.h>
 
-// #define LOG_FILE "/var/log/matt_daemon.log"
-
-#define LOG_FILE "/tmp/matt_daemon.log"
+#define LOG_FILE "/var/log/matt_daemon.log"
 
 #define COLOR_RESET std::string("\033[0m")
 #define COLOR_RED std::string("\033[0;31m")

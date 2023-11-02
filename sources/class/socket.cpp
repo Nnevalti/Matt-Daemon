@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   socket.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/31 15:38:58 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/01 22:52:33 by lucocozz         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "class/socket.hpp"
 
 Socket::Socket(int family, int type, int protocol, int fd) : _closed(false),  _addrinfo(NULL), family(family), type(type), protocol(protocol), fd(fd)

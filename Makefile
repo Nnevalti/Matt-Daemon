@@ -1,10 +1,10 @@
 NAME = Matt_daemon
 
 SRCS =		main.cpp			\
-			run_server.cpp		\
 			$(_CLASS)			\
 			$(_UTILS)			\
 			$(_SETUP)			\
+			$(_SERVER)			\
 
 _CLASS =	tintin_reporter.cpp	\
 			socket.cpp			\
@@ -13,10 +13,13 @@ _CLASS =	tintin_reporter.cpp	\
 _UTILS =	signals.cpp			\
 			lock.cpp			\
 			daemonize.cpp		\
+			check_root.cpp		\
 
 _SETUP =	cleanup.cpp			\
 			init_logger.cpp		\
 			init_server.cpp		\
+
+_SERVER =	run_server.cpp		\
 
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
@@ -35,13 +38,13 @@ RM = rm -f
 MKDIR = mkdir -p
 DEBUG = off
 
-CXXFLAGS = $(INCLUDES_DIR:%=-I %) -MMD -Wall -Wextra -Werror -std=c++20
+CXXFLAGS = $(INCLUDES_DIR:%=-I %) -MMD -Wall -Wextra -Werror -std=c++17
 ifeq ($(DEBUG), on)
 	CXXFLAGS += -g3
 endif
 LDFLAGS = $(LIBS:%=-L lib%) $(LIBS:%=-l%)
 
-vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class /utils /setup)
+vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class /utils /setup /server)
 
 all:
 	$(foreach LIB, ${LIBS}, ${MAKE} -C lib${LIB} ;)

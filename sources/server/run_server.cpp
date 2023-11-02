@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   run_server.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: lucocozz <lucocozz@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/01 18:27:55 by lucocozz          #+#    #+#             */
-/*   Updated: 2023/11/02 15:15:51 by lucocozz         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "matt-daemon.hpp"
 
 static void	__acceptClient(Socket &server, Epoll &epoll, std::map<int, std::shared_ptr<Socket>> &clients)

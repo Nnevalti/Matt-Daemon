@@ -1,0 +1,10 @@
+version: '3'
+services:
+  matt-daemon:
+    container_name: matt-daemon
+    image: matt-daemon
+    build: .
+    ports:
+      - "4243:4242"
+    volumes:
+      - ./:/matt-daemon
