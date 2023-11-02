@@ -4,6 +4,7 @@ SRCS =		main.cpp			\
 			run_server.cpp		\
 			$(_CLASS)			\
 			$(_UTILS)			\
+			$(_SETUP)			\
 
 _CLASS =	tintin_reporter.cpp	\
 			socket.cpp			\
