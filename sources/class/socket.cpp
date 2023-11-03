@@ -1,6 +1,6 @@
 #include "class/socket.hpp"
 
-Socket::Socket(int family, int type, int protocol, int fd) : _closed(false),  _addrinfo(NULL), family(family), type(type), protocol(protocol), fd(fd)
+Socket::Socket(int family, int type, int protocol) : _closed(false),  _addrinfo(NULL), family(family), type(type), protocol(protocol)
 {
 	this->fd = socket(this->family, this->type, this->protocol);
 	if (this->fd == -1)
