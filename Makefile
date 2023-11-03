@@ -9,6 +9,7 @@ SRCS =		main.cpp			\
 _CLASS =	tintin_reporter.cpp	\
 			socket.cpp			\
 			epoll.cpp			\
+			# ssl.cpp				\
 
 _UTILS =	signals.cpp			\
 			lock.cpp			\

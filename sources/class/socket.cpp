@@ -7,29 +7,6 @@ Socket::Socket(int family, int type, int protocol, int fd) : _closed(false),  _a
 		throw std::runtime_error("socket: " + std::string(strerror(errno)));
 }
 
-Socket::Socket(const int fd) : _closed(false), _addrinfo(NULL), fd(fd)
-{
-	struct sockaddr_storage	addr;
-	struct addrinfo			hints;
-	socklen_t				len = sizeof(addr);
-
-	bzero(&hints, sizeof(hints));
-	if (getsockname(fd, (struct sockaddr *)&addr, &len) == -1)
-		throw std::runtime_error("getsockname: " + std::string(strerror(errno)));
-	hints.ai_family = addr.ss_family;
-	if (getsockopt(fd, SOL_SOCKET, SO_TYPE, &hints.ai_socktype, &len) == -1)
-		throw std::runtime_error("getsockopt: " + std::string(strerror(errno)));
-	if (getsockopt(fd, SOL_SOCKET, SO_PROTOCOL, &hints.ai_protocol, &len) == -1)
-		throw std::runtime_error("getsockopt: " + std::string(strerror(errno)));
-	struct addrinfo *res;
-	if (getaddrinfo(NULL, "0", &hints, &res) != 0)
-		throw std::runtime_error("getaddrinfo: " + std::string(gai_strerror(errno)));
-	this->_addrinfo = res;
-	this->family = hints.ai_family;
-	this->type = hints.ai_socktype;
-	this->protocol = hints.ai_protocol;
-}
-
 Socket::Socket(const Socket &instance) : _closed(false), _addrinfo(NULL), fd(-1)
 {
 	*this = instance;

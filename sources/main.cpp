@@ -1,6 +1,10 @@
 #include "matt-daemon.hpp"
 
-t_glob g_global = {true, 0, TintinReporter()};
+t_glob g_global = {
+	.is_running = true,
+	.fd_lock = 0,
+	.logger = TintinReporter()
+};
 
 int main()
 {

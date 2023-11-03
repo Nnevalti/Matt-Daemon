@@ -32,7 +32,6 @@ public:
 	typedef typename std::pair<std::string, ssize_t>	RecvData;
 
 	explicit Socket(int family = AF_INET, int type = SOCK_STREAM, int protocol = IPPROTO_IP, int fd = -1);
-	explicit Socket(const int fd);
 	Socket(const Socket &instance);
 	~Socket();
 
