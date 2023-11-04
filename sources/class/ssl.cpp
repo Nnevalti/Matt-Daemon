@@ -123,7 +123,6 @@ namespace ssl
 		int fd = ::accept(this->fd, NULL, NULL);
 		if (fd == -1)
 			throw std::runtime_error("accept: " + std::string(strerror(errno)));
-		SSL_set_fd(this->_ssl, fd);
 		if (SSL_set_fd(this->_ssl, fd) == 0)
 			throw std::runtime_error("SSL_set_fd(): " + SSLErrorString);
 		if (SSL_accept(this->_ssl) == -1)
@@ -190,8 +189,8 @@ namespace ssl
 
 	void SSocket::shutdown(int how)
 	{
+		Socket::shutdown(how);
 		if (SSL_shutdown(this->_ssl) == -1)
 			throw std::runtime_error("SSL_shutdown(): " + SSLErrorString);
-		Socket::shutdown(how);
 	}
 }
