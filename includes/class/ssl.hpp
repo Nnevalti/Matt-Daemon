@@ -37,7 +37,21 @@ namespace ssl
 			SSLContext	_ctx;
 		
 		public:
-			SSocket(SSLContext &ctx, int family = AF_INET, int type = SOCK_STREAM, int protocol = IPPROTO_IP);
-			~SSocket();
+			SSocket(int family = AF_INET, int type = SOCK_STREAM, int protocol = IPPROTO_IP, int fd = -1);
+			SSocket(SSLContext &ctx, int family = AF_INET, int type = SOCK_STREAM, int protocol = IPPROTO_IP, int fd = -1);
+			SSocket(const SSocket &instance);
+			~SSocket() override;
+
+			SSocket		&operator=(const SSocket &instance);
+
+			void		setContext(SSLContext &ctx);
+			SSocket		accept(void);
+			void		connect(const std::string &host, int port) override;
+			void		connect(const std::string &host, std::string port) override;
+			ssize_t		send(const std::string &msg, int flags = 0) override;
+			ssize_t		send(const void *data, size_t size, int flags = 0) override;
+			RecvData	recv(int flags = 0) override;
+			ssize_t		recv(void *buffer, size_t size, int flags = 0) override;
+			void		shutdown(int how = SHUT_RDWR) override;
 	};
 };

@@ -76,18 +76,122 @@ namespace ssl
 
 
 
-	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol) : Socket(family, type, protocol)
+
+
+	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol, int fd)
 	{
+		*this = SSocket(family, type, protocol, fd);
 		this->_ctx = ctx;
+	}
+
+	SSocket::SSocket(int family, int type, int protocol, int fd) : Socket(family, type, protocol, fd)
+	{
+		this->_ctx = SSLContext();
 		this->_ssl = SSL_new(this->_ctx.getCtx());
 		if (this->_ssl == nullptr)
 			throw std::runtime_error("SSL_new(): " + SSLErrorString);
-		if (SSL_set_fd(this->_ssl, this->fd) == 0)
-			throw std::runtime_error("SSL_set_fd(): " + SSLErrorString);
+	}
+
+	SSocket::SSocket(const SSocket &instance) : Socket(instance)
+	{
+		*this = instance;
 	}
 
 	SSocket::~SSocket()
 	{
 		SSL_free(this->_ssl);
+	}
+
+	SSocket &SSocket::operator=(const SSocket &instance)
+	{
+		if (this != &instance) {
+			Socket::operator=(instance);
+			this->_ctx = instance._ctx;
+			this->_ssl = instance._ssl;
+			SSL_up_ref(this->_ssl);
+		}
+		return (*this);
+	}
+
+	void SSocket::setContext(SSLContext &ctx)
+	{
+		this->_ctx = ctx;
+	}
+
+	SSocket	SSocket::accept(void)
+	{
+		int fd = ::accept(this->fd, NULL, NULL);
+		if (fd == -1)
+			throw std::runtime_error("accept: " + std::string(strerror(errno)));
+		SSL_set_fd(this->_ssl, fd);
+		if (SSL_set_fd(this->_ssl, fd) == 0)
+			throw std::runtime_error("SSL_set_fd(): " + SSLErrorString);
+		if (SSL_accept(this->_ssl) == -1)
+			throw std::runtime_error("SSL_accept(): " + SSLErrorString);
+		return (SSocket(this->family, this->type, this->protocol, fd));
+	}
+
+	void	SSocket::connect(const std::string &host, int port)
+	{
+		this->connect(host, std::to_string(port));
+	}
+
+	void SSocket::connect(const std::string &host, std::string port)
+	{
+		Socket::connect(host, port);
+		if (SSL_set_fd(this->_ssl, this->fd) == 0)
+			throw std::runtime_error("SSL_set_fd(): " + SSLErrorString);
+		if (SSL_connect(this->_ssl) == -1)
+			throw std::runtime_error("SSL_connect(): " + SSLErrorString);
+	}
+
+	ssize_t SSocket::send(const std::string &msg, int flags)
+	{
+		(void)flags;
+		return (this->send(msg.c_str(), msg.size()));
+	}
+
+	ssize_t SSocket::send(const void *data, size_t size, int flags)
+	{
+		(void)flags;
+		ssize_t ret = SSL_write(this->_ssl, data, size);
+		if (ret == -1)
+			throw std::runtime_error("SSL_write(): " + SSLErrorString);
+		return (ret);
+	}
+
+	Socket::RecvData SSocket::recv(int flags)
+	{
+		std::string	data;
+		ssize_t		size = 0;
+		ssize_t		total_size = 0;
+		char		buffer[MAX_BUFFER_SIZE + 1];
+
+		(void)flags;
+		while ((size = SSL_read(this->_ssl, buffer, MAX_BUFFER_SIZE)) > 0) {
+			data.append(buffer, size);
+			total_size += size;
+			if (size < MAX_BUFFER_SIZE)
+				break;
+		}
+		if (size == -1)
+			throw std::runtime_error("recv: " + std::string(strerror(errno)));
+		return (std::make_pair(data, total_size));
+	}
+
+	ssize_t SSocket::recv(void *buffer, size_t size, int flags)
+	{
+		(void)flags;
+		ssize_t ret = SSL_read(this->_ssl, buffer, size);
+		if (ret == -1)
+			throw std::runtime_error("SSL_read(): " + SSLErrorString);
+		return (ret);
+	}
+
+	void SSocket::shutdown(int how)
+	{
+		if (SSL_shutdown(this->_ssl) == -1)
+			throw std::runtime_error("SSL_shutdown(): " + SSLErrorString);
+		Socket::shutdown(how);
 	}
 }

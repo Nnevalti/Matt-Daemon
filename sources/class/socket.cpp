@@ -2,9 +2,10 @@
 
 std::map<int, int> _socketRefCounter = {};
 
-Socket::Socket(int family, int type, int protocol) : _closed(false),  _addrinfo(NULL), family(family), type(type), protocol(protocol)
+Socket::Socket(int family, int type, int protocol, int fd) : _closed(false),  _addrinfo(NULL), family(family), type(type), protocol(protocol), fd(fd)
 {
-	this->fd = socket(this->family, this->type, this->protocol);
+	if (this->fd == -1)
+		this->fd = socket(this->family, this->type, this->protocol);
 	if (this->fd == -1)
 		throw std::runtime_error("socket: " + std::string(strerror(errno)));
 	this->__upRef();
@@ -77,14 +78,12 @@ void	Socket::listen(int backlog)
 		throw std::runtime_error("listen: " + std::string(strerror(errno)));
 }
 
-Socket	Socket::accept(sockaddr *addr, socklen_t *addrlen)
+Socket	Socket::accept(void)
 {
-	Socket	new_socket;
-
-	new_socket.fd = ::accept(this->fd, addr, addrlen);
-	if (new_socket.fd == -1)
+	int fd = ::accept(this->fd, NULL, NULL);
+	if (fd == -1)
 		throw std::runtime_error("accept: " + std::string(strerror(errno)));
-	return (new_socket);
+	return (Socket(this->family, this->type, this->protocol, fd));
 }
 
 void	Socket::connect(const std::string &host, int port) 
