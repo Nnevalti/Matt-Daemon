@@ -9,6 +9,7 @@ SRCS =		main.cpp			\
 _CLASS =	tintin_reporter.cpp	\
 			socket.cpp			\
 			epoll.cpp			\
+			ssl.cpp				\
 
 _UTILS =	signals.cpp			\
 			lock.cpp			\
@@ -42,7 +43,7 @@ CXXFLAGS = $(INCLUDES_DIR:%=-I %) -MMD -Wall -Wextra -Werror -std=c++17
 ifeq ($(DEBUG), on)
 	CXXFLAGS += -g3
 endif
-LDFLAGS = $(LIBS:%=-L lib%) $(LIBS:%=-l%)
+LDFLAGS = $(LIBS:%=-L lib%) $(LIBS:%=-l%) -lssl -lcrypto
 
 vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class /utils /setup /server)
 
@@ -58,7 +59,7 @@ $(NAME): $(OBJS) | $(LIBS:%=lib%.a)
 
 -include $(DEPENDENCIES)
 $(OBJS_DIR)/%.o: %.cpp $(OBJS_DIR)/debug$(DEBUG) | $(OBJS_DIR) 
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) -c $< -o $@ 
 
 $(OBJS_DIR):
 	$(MKDIR) $(OBJS_DIR)

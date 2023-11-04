@@ -16,6 +16,7 @@
 #include "class/tintin_reporter.hpp"
 #include "class/socket.hpp"
 #include "class/epoll.hpp"
+#include "class/ssl.hpp"
 
 #define PORT 4242
 #define LOCK_FILE "/var/lock/matt_daemon.lock"
