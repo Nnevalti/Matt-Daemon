@@ -10,7 +10,7 @@
 
 namespace ssl
 {
-	static void init();
+	void init();
 	class SSLContext
 	{
 		private:

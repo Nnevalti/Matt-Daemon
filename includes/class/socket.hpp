@@ -16,13 +16,23 @@
 #include <string>
 #include <stdexcept>
 #include <vector>
+#include <map>
 
+
+#define MAX_BUFFER_SIZE 4096
+
+extern std::map<int, int> _socketRefCounter;
 
 class Socket
 {
 private:
 	bool		_closed;
 	addrinfo	*_addrinfo;
+
+
+	void	__upRef(void);
+	void	__downRef(void);
+
 
 public:
 	int family;
@@ -54,7 +64,12 @@ public:
 	void		setSockOpt(int level, int optname, int optval);
 	void		shutdown(int how = SHUT_RDWR);
 	void		reuseAddress(void);
+	Socket		clone(void);
+
 
 	bool		operator==(const Socket &instance) const;
 	bool		operator==(const int &fd) const;
+	bool		operator!=(const Socket &instance) const;
+	bool		operator!=(const int &fd) const;
+	operator	int(void) const;
 };

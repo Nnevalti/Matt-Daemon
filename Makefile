@@ -31,7 +31,7 @@ LIBS_DIR = libs
 OBJS_DIR = .objs
 INCLUDES_DIR = includes $(LIBS:%=lib%/includes) $(LIBS:%=lib%)
 
-LIBS = 
+LIBS =
 
 MAKE = make
 CXX = c++
@@ -59,7 +59,7 @@ $(NAME): $(OBJS) | $(LIBS:%=lib%.a)
 
 -include $(DEPENDENCIES)
 $(OBJS_DIR)/%.o: %.cpp $(OBJS_DIR)/debug$(DEBUG) | $(OBJS_DIR) 
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) -c $< -o $@ 
 
 $(OBJS_DIR):
 	$(MKDIR) $(OBJS_DIR)

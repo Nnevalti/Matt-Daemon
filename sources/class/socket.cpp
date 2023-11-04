@@ -1,10 +1,13 @@
 #include "class/socket.hpp"
 
+std::map<int, int> _socketRefCounter = {};
+
 Socket::Socket(int family, int type, int protocol) : _closed(false),  _addrinfo(NULL), family(family), type(type), protocol(protocol)
 {
 	this->fd = socket(this->family, this->type, this->protocol);
 	if (this->fd == -1)
 		throw std::runtime_error("socket: " + std::string(strerror(errno)));
+	this->__upRef();
 }
 
 Socket::Socket(const Socket &instance) : _closed(false), _addrinfo(NULL), fd(-1)
@@ -14,7 +17,7 @@ Socket::Socket(const Socket &instance) : _closed(false), _addrinfo(NULL), fd(-1)
 
 Socket::~Socket(void)
 {
-	if (this->_addrinfo != NULL)
+	if (this->_addrinfo != NULL && _socketRefCounter.find(this->fd) == _socketRefCounter.end())
 		freeaddrinfo(this->_addrinfo);
 	this->close();
 }
@@ -23,30 +26,26 @@ Socket	&Socket::operator=(const Socket &instance)
 {
 	if (this == &instance)
 		return (*this);
-	this->close();
+
+	this->__upRef();
 	this->_closed = instance._closed;
-	this->fd = dup(instance.fd);
-	if (this->fd == -1)
-		throw std::runtime_error("dup: " + std::string(strerror(errno)));
-	if (instance._addrinfo != NULL) {
-		struct addrinfo *res;
-		if (getaddrinfo(NULL, "0", instance._addrinfo, &res) != 0)
-			throw std::runtime_error("getaddrinfo: " + std::string(gai_strerror(errno)));
-		if (this->_addrinfo != NULL)
-			freeaddrinfo(this->_addrinfo);
-		this->_addrinfo = res;
-	}
+	this->fd = instance.fd;
+	this->_addrinfo = instance._addrinfo;
 	this->family = instance.family;
 	this->type = instance.type;
 	this->protocol = instance.protocol;
+
 	return (*this);
 }
 
 void	Socket::close(void)
 {
-	if (this->_closed == false && this->fd != -1) {
-		if (::close(this->fd) == -1)
-			throw std::runtime_error("close: " + std::string(strerror(errno)));
+	if (this->_closed == false) {
+		this->__downRef();
+		if (_socketRefCounter.find(this->fd) == _socketRefCounter.end()) {
+			if (::close(this->fd) == -1)
+				throw std::runtime_error("close: " + std::string(strerror(errno)));
+		}
 		this->_closed = true;
 	}
 }
@@ -60,9 +59,9 @@ void	Socket::bind(std::string address, std::string port)
 {
 	addrinfo	hints;
 
-	bzero(&hints, sizeof(hints));
 	if (this->_addrinfo != NULL)
-		throw std::runtime_error("bind: socket already binded");
+		throw std::runtime_error("bind: socket already used");
+	bzero(&hints, sizeof(hints));
 	hints.ai_family = this->family;
 	hints.ai_socktype = this->type;
 	hints.ai_protocol = this->protocol;
@@ -98,6 +97,8 @@ void	Socket::connect(const std::string &host, std::string port)
 	addrinfo	hints;
 	addrinfo	*res;
 
+	if (this->_addrinfo != NULL)
+		throw std::runtime_error("connect: socket already used");
 	bzero(&hints, sizeof(hints));
 	hints.ai_family = this->family;
 	hints.ai_socktype = this->type;
@@ -128,12 +129,12 @@ Socket::RecvData Socket::recv(int flags)
 	std::string	data;
 	ssize_t		size = 0;
 	ssize_t		total_size = 0;
-	char		buffer[1024];
+	char		buffer[MAX_BUFFER_SIZE + 1];
 
-	while ((size = ::recv(this->fd, buffer, 1024, flags)) > 0) {
+	while ((size = ::recv(this->fd, buffer, MAX_BUFFER_SIZE, flags)) > 0) {
 		data.append(buffer, size);
 		total_size += size;
-		if (size < 1024)
+		if (size < MAX_BUFFER_SIZE)
 			break;
 	}
 	if (size == -1)
@@ -190,6 +191,23 @@ void	Socket::reuseAddress(void)
 	this->setSockOpt(SOL_SOCKET, SO_REUSEADDR, optval);
 }
 
+Socket	Socket::clone(void)
+{
+	Socket	new_socket;
+
+	new_socket.fd = dup(this->fd);
+	if (new_socket.fd == -1)
+		throw std::runtime_error("dup: " + std::string(strerror(errno)));
+	if (this->_addrinfo != NULL) {
+		struct addrinfo *res;
+		if (getaddrinfo(NULL, "0", this->_addrinfo, &res) != 0)
+			throw std::runtime_error("getaddrinfo: " + std::string(gai_strerror(errno)));
+		new_socket._addrinfo = res;
+	}
+	return (new_socket);
+}
+
+
 bool Socket::operator==(const Socket &instance) const
 {
 	return (this->operator==(instance.fd));
@@ -212,4 +230,38 @@ bool	Socket::operator==(const int &fd) const
             return (true);
     }
     return (false);
+}
+
+bool	Socket::operator!=(const Socket &instance) const
+{
+	return (this->operator!=(instance.fd));
+}
+
+bool	Socket::operator!=(const int &fd) const
+{
+	return (!this->operator==(fd));
+}
+
+Socket::operator int(void) const
+{
+	return (this->fd);
+}
+
+
+
+void	Socket::__upRef(void)
+{
+	if (_socketRefCounter.find(this->fd) == _socketRefCounter.end())
+		_socketRefCounter[this->fd] = 1;
+	else
+		_socketRefCounter[this->fd]++;
+}
+
+void	Socket::__downRef(void)
+{
+	if (_socketRefCounter.find(this->fd) != _socketRefCounter.end()) {
+		_socketRefCounter[this->fd]--;
+		if (_socketRefCounter[this->fd] == 0)
+			_socketRefCounter.erase(this->fd);
+	}
 }
