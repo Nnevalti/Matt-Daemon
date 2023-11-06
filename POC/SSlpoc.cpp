@@ -75,7 +75,7 @@ int main(int arc, char **argv)
         SSL_set_bio(ssl, accept_bio, accept_bio);
         
         SSL_accept(ssl);
-        
+
         ERR_print_errors_fp(stderr);
         
         BIO *bio = BIO_pop(accept_bio);

@@ -110,6 +110,8 @@ namespace ssl
 	SSocket::~SSocket()
 	{
 		SSL_free(this->_ssl);
+		if (this->_bio != nullptr && _socketRefCounter.find(this->fd) == _socketRefCounter.end())
+			BIO_free(this->_bio);
 	}
 
 	SSocket &SSocket::operator=(const SSocket &instance)
@@ -118,6 +120,7 @@ namespace ssl
 			Socket::operator=(instance);
 			this->_ctx = instance._ctx;
 			this->_ssl = instance._ssl;
+			this->_bio = instance._bio;
 			SSL_up_ref(this->_ssl);
 		}
 		return (*this);
@@ -131,13 +134,15 @@ namespace ssl
 	SSocket	SSocket::accept(void)
 	{
 		int fd = ::accept(this->fd, NULL, NULL);
+		SSocket	client(this->family, this->type, this->protocol, fd);
 		if (fd == -1)
 			throw std::runtime_error("accept: " + std::string(strerror(errno)));
+		client.initBIO();
 		if (SSL_set_fd(this->_ssl, fd) == 0)
 			throw std::runtime_error("SSL_set_fd(): " + SSLErrorString);
 		if (SSL_accept(this->_ssl) == -1)
 			throw std::runtime_error("SSL_accept(): " + SSLErrorString);
-		return (SSocket(this->family, this->type, this->protocol, fd));
+		return (client);
 	}
 
 	void	SSocket::connect(const std::string &host, int port)
@@ -202,5 +207,13 @@ namespace ssl
 		Socket::shutdown(how);
 		if (SSL_shutdown(this->_ssl) == -1)
 			throw std::runtime_error("SSL_shutdown(): " + SSLErrorString);
+	}
+
+	void	SSocket::initBIO(void)
+	{
+		this->_bio = BIO_new_socket(this->fd, BIO_CLOSE);
+		if (this->_bio == nullptr)
+			throw std::runtime_error("BIO_new_socket(): " + SSLErrorString);
+		SSL_set_bio(this->_ssl, this->_bio, this->_bio);
 	}
 }

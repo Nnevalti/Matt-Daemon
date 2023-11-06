@@ -35,6 +35,7 @@ namespace ssl
 		private:
 			SSL			*_ssl;
 			SSLContext	_ctx;
+			BIO			*_bio;
 		
 		public:
 			SSocket(int family = AF_INET, int type = SOCK_STREAM, int protocol = IPPROTO_IP, int fd = -1);
@@ -53,5 +54,6 @@ namespace ssl
 			RecvData	recv(int flags = 0) override;
 			ssize_t		recv(void *buffer, size_t size, int flags = 0) override;
 			void		shutdown(int how = SHUT_RDWR) override;
+			void		initBIO(void);
 	};
 };
