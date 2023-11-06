@@ -36,3 +36,5 @@ Matt_daemon
 .vscode/settings.json
 .nfs*
 __pycache__/
+*.key
+*.crt
