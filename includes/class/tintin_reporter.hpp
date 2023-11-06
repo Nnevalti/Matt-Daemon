@@ -10,6 +10,7 @@
 #include <string.h>
 
 #define LOG_FILE "/var/log/matt_daemon.log"
+// #define LOG_FILE "/tmp/matt_daemon.log"
 
 #define COLOR_RESET std::string("\033[0m")
 #define COLOR_RED std::string("\033[0;31m")

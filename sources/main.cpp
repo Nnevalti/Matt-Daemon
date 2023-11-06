@@ -15,7 +15,7 @@ int main()
 	if (lock_file() == false)
 		return(EXIT_FAILURE);
 	try {
-		ssl::init();
+		// ssl::init();
 		g_global.logger.logInfo("Started.");
 		init_server(server);
 		daemonize();

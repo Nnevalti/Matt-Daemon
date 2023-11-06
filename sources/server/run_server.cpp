@@ -2,7 +2,7 @@
 
 static void	__acceptClient(Socket &server, Epoll &epoll, std::map<int, std::shared_ptr<Socket>> &clients)
 {
-	std::shared_ptr<Socket>	client =  std::make_shared<Socket>(server.accept());
+	std::shared_ptr<Socket>	client = std::make_shared<Socket>(server.accept());
 	if (clients.size() < MAX_CLIENT) {
 		epoll.subscribe(client->fd, EPOLLIN);
 		clients.insert(std::pair<int, std::shared_ptr<Socket>>(client->fd, client));

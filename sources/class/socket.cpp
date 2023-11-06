@@ -28,13 +28,13 @@ Socket	&Socket::operator=(const Socket &instance)
 	if (this == &instance)
 		return (*this);
 
-	this->__upRef();
 	this->_closed = instance._closed;
 	this->fd = instance.fd;
 	this->_addrinfo = instance._addrinfo;
 	this->family = instance.family;
 	this->type = instance.type;
 	this->protocol = instance.protocol;
+	this->__upRef();
 
 	return (*this);
 }
