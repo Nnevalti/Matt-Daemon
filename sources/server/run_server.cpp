@@ -1,11 +1,11 @@
 #include "matt-daemon.hpp"
 
-static void	__acceptClient(Socket &server, Epoll &epoll, std::map<int, std::shared_ptr<Socket>> &clients)
+static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients)
 {
-	std::shared_ptr<Socket>	client = std::make_shared<Socket>(server.accept());
+	std::shared_ptr<ssl::SSocket>	client = std::make_shared<ssl::SSocket>(server.accept());
 	if (clients.size() < MAX_CLIENT) {
 		epoll.subscribe(client->fd, EPOLLIN);
-		clients.insert(std::pair<int, std::shared_ptr<Socket>>(client->fd, client));
+		clients.insert(std::pair<int, std::shared_ptr<ssl::SSocket>>(client->fd, client));
 		g_global.logger.log("Client " + std::to_string(client->fd) + " connected.");
 	}
 	else {
@@ -15,7 +15,7 @@ static void	__acceptClient(Socket &server, Epoll &epoll, std::map<int, std::shar
 	}
 }
 
-static void	__removeClient(Epoll &epoll, std::map<int, std::shared_ptr<Socket>> &clients, int fd)
+static void	__removeClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd)
 {
 	epoll.unsubscribe(fd);
 	clients[fd]->close();
@@ -23,9 +23,9 @@ static void	__removeClient(Epoll &epoll, std::map<int, std::shared_ptr<Socket>> 
 	g_global.logger.log("Client " + std::to_string(fd) + " disconnected.");
 }
 
-static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<Socket>> &clients, int fd)
+static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd)
 {
-	Socket::RecvData	data = clients[fd]->recv();
+	ssl::SSocket::RecvData	data = clients[fd]->recv();
 
 	if (data.second == 0)
 		__removeClient(epoll, clients, fd);
@@ -37,10 +37,10 @@ static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<Socket>> &c
 	}
 }
 
-void	run_server(Socket &server)
+void	run_server(ssl::SSocket &server)
 {
 	Epoll	epoll;
-	std::map<int, std::shared_ptr<Socket>>	clients;
+	std::map<int, std::shared_ptr<ssl::SSocket>>	clients;
 
 	epoll.subscribe(server.fd, EPOLLIN);
 	while (g_global.is_running == true)

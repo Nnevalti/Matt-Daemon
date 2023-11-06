@@ -6,16 +6,18 @@ t_glob g_global = {
 	.logger = TintinReporter()
 };
 
+
 int main()
 {
-	Socket	server;
+	ssl::init();
+	ssl::SSLContext	ctx(CERTIFICATE_PATH, PRIVATE_KEY_PATH);
+	ssl::SSocket	server(ctx);
 
 	checkRoot();
 	init_logger();
 	if (lock_file() == false)
 		return(EXIT_FAILURE);
 	try {
-		// ssl::init();
 		g_global.logger.logInfo("Started.");
 		init_server(server);
 		daemonize();

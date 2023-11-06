@@ -18,6 +18,10 @@ namespace ssl
 		if (this->_ctx == nullptr)
 			throw std::runtime_error("SSL_CTX_new(): " + SSLErrorString);
 		this->setOptions(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+		if(SSL_CTX_set_cipher_list(this->_ctx, "HIGH:!aNULL:!MD5") != 1) {
+			throw std::runtime_error("SSL_CTX_set_cipher_list(): " + SSLErrorString);
+		}
+
 	}
 
 	SSLContext::SSLContext(const SSLContext &instance)
@@ -30,6 +34,10 @@ namespace ssl
 		this->_ctx = SSL_CTX_new(SSLv23_server_method());
 		if (this->_ctx == nullptr)
 			throw std::runtime_error("SSL_CTX_new(): " + SSLErrorString);
+		if(SSL_CTX_set_cipher_list(this->_ctx, "HIGH:!aNULL:!MD5") != 1) {
+			throw std::runtime_error("SSL_CTX_set_cipher_list(): " + SSLErrorString);
+		}
+
 		this->setOptions(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 		this->loadCertificate(certificate);
 		this->loadPrivateKey(privateKey);
@@ -70,6 +78,8 @@ namespace ssl
 	{
 		if (SSL_CTX_use_PrivateKey_file(this->_ctx, path.c_str(), SSL_FILETYPE_PEM) == 0)
 			throw std::runtime_error("SSL_CTX_use_PrivateKey_file(): " + SSLErrorString);
+		if (!SSL_CTX_check_private_key(this->_ctx))
+			throw std::runtime_error("Private key does not match the public certificate");
 	}
 
 

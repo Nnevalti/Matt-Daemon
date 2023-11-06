@@ -50,6 +50,8 @@ vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class /utils /setup /server)
 all:
 	$(foreach LIB, ${LIBS}, ${MAKE} -C lib${LIB} ;)
 	$(MAKE) $(NAME)
+	openssl req -x509 -sha256 -days 356 -nodes -newkey rsa:2048 -subj "/CN=/C=FR/L=Paris" -keyout matt-daemon.key -out matt-daemon.crt
+
 
 scan:
 	scan-build $(MAKE)
@@ -74,6 +76,7 @@ $(OBJS_DIR)/debug$(DEBUG): | $(OBJS_DIR)
 clean:
 	$(foreach LIB, $(LIBS), $(MAKE) $@ -C lib$(LIB);)
 	$(RM) -r $(OBJS_DIR)
+	$(RM) matt-daemon.key matt-daemon.crt
 
 fclean: clean
 	$(RM) $(NAME) $(foreach LIB, $(LIBS), lib$(LIB)/lib$(LIB).a)

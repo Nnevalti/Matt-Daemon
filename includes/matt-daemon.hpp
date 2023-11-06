@@ -21,6 +21,8 @@
 #define PORT 4242
 #define LOCK_FILE "/var/lock/matt_daemon.lock"
 #define MAX_CLIENT 3
+#define CERTIFICATE_PATH "/home/vdescham/Documents/Matt-Daemon/matt-daemon.crt"
+#define PRIVATE_KEY_PATH "/home/vdescham/Documents/Matt-Daemon/matt-daemon.key"
 
 typedef struct glob {
 	bool 			is_running;
@@ -32,12 +34,12 @@ extern t_glob g_global;
 
 
 // Server
-void	run_server(Socket &server);
+void	run_server(ssl::SSocket &server);
 
 // Setup
 void	cleanup(void);
 void	init_logger(void);
-void	init_server(Socket &server);
+void	init_server(ssl::SSocket &server);
 
 
 // Utils

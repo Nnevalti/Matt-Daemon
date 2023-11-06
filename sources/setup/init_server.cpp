@@ -1,6 +1,6 @@
 #include "matt-daemon.hpp"
 
-void	init_server(Socket &server)
+void	init_server(ssl::SSocket &server)
 {
 	g_global.logger.logInfo("Creating server.");
 	server.reuseAddress();

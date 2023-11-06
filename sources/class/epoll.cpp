@@ -58,8 +58,11 @@ Epoll::Events	Epoll::poll(int timeout)
 	if (nb_events == -1)
 		throw std::runtime_error("epoll_wait: " + std::string(strerror(errno)));
 	Events	events;
-	for (int i = 0; i < nb_events; i++)
-		events.push_back(std::make_pair(this->_events[i].data.fd, this->_events[i].events));
+	for (int i = 0; i < nb_events; i++) {
+		int fd = this->_events[i].data.fd;
+		uint32_t events_tmp = this->_events[i].events;
+		events.push_back(std::make_pair(fd, events_tmp));
+	}
 	return (events);
 }
 
