@@ -20,7 +20,7 @@ def receive_messages(client_socket, chat_history):
             if not message:
                 break
             chat_history.config(state=tk.NORMAL)
-            chat_history.insert(tk.END, f'{message}\n')
+            chat_history.insert(tk.END, f'{message}')
             chat_history.config(state=tk.DISABLED)
         except Exception as e:
             messagebox.showerror("Error", f"Error receiving message: {e}")
@@ -61,7 +61,7 @@ def send_message_handler():
         input_field.delete(0, tk.END)
 
 root = tk.Tk()
-root.title('SSL Chat Client')
+root.title('Ben_AFK SSL Chat Client')
 
 chat_history = tk.Text(root, width=40, height=10, state=tk.DISABLED, background='black', foreground='white')
 chat_history.pack()

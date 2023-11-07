@@ -1,5 +1,14 @@
 #include "matt-daemon.hpp"
 
+static void __broadcast(std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd, std::string const &msg)
+{
+	for (auto it = clients.begin(); it != clients.end(); ++it)
+	{
+		if (it->first != fd)
+			it->second->send(msg);
+	}
+}
+
 static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients)
 {
 	std::shared_ptr<ssl::SSocket>	client = std::make_shared<ssl::SSocket>(server.accept());
@@ -7,6 +16,7 @@ static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, std::map<int, std
 		epoll.subscribe(client->fd, EPOLLIN);
 		clients.insert(std::pair<int, std::shared_ptr<ssl::SSocket>>(client->fd, client));
 		g_global.logger.log("Client " + std::to_string(client->fd) + " connected.");
+		__broadcast(clients, client->fd, "Client " + std::to_string(client->fd) + " connected.\n");
 	}
 	else {
 		client->send("Server is full.");
@@ -21,15 +31,7 @@ static void	__removeClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSoc
 	clients[fd]->close();
 	clients.erase(fd);
 	g_global.logger.log("Client " + std::to_string(fd) + " disconnected.");
-}
-
-static void __broadcast(std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd, std::string const &msg)
-{
-	for (auto it = clients.begin(); it != clients.end(); ++it)
-	{
-		if (it->first != fd)
-			it->second->send(msg);
-	}
+	__broadcast(clients, fd, "Client " + std::to_string(fd) + " disconnected.\n");
 }
 
 static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd)
@@ -44,10 +46,10 @@ static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocke
 		g_global.logger.log("Client " + std::to_string(fd) + ": " + data.first);
 		if (data.first == "quit") {
 			g_global.is_running = false;
-			__broadcast(clients, fd, "Server is shutting down.");
+			__broadcast(clients, fd, "Server is shutting down.\n");
 		}
 		else
-			__broadcast(clients, fd, "Client " + std::to_string(fd) + ": " + data.first);
+			__broadcast(clients, fd, "Client " + std::to_string(fd) + ": " + data.first + "\n");
 	}
 }
 
