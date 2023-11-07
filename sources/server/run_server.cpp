@@ -1,15 +1,17 @@
 #include "matt-daemon.hpp"
 
-static void __broadcast(std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd, std::string const &msg)
+
+typedef typename std::map<int, std::shared_ptr<ssl::SSocket>> Clients;
+
+
+static void __broadcast(Clients &clients, int fd, std::string const &msg)
 {
 	for (auto it = clients.begin(); it != clients.end(); ++it)
-	{
 		if (it->first != fd)
 			it->second->send(msg);
-	}
 }
 
-static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients)
+static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, Clients &clients)
 {
 	std::shared_ptr<ssl::SSocket>	client = std::make_shared<ssl::SSocket>(server.accept());
 	if (clients.size() < MAX_CLIENT) {
@@ -25,7 +27,7 @@ static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, std::map<int, std
 	}
 }
 
-static void	__removeClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd)
+static void	__removeClient(Epoll &epoll, Clients &clients, int fd)
 {
 	epoll.unsubscribe(fd);
 	clients[fd]->close();
@@ -34,7 +36,30 @@ static void	__removeClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSoc
 	__broadcast(clients, fd, "Client " + std::to_string(fd) + " disconnected.\n");
 }
 
-static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd)
+
+static bool	__doCommand(std::string const &command, Clients &clients, int fd)
+{
+	if (command == "quit") {
+		g_global.logger.logInfo("Client " + std::to_string(fd) + " sent quit command.");
+		__broadcast(clients, fd, "Server is shutting down.\n");
+		g_global.is_running = false;
+		return (true);
+	}
+	else if (command == "mail") {
+		smtp::Smtp<Socket>	smtp(SMTP_SERVER, SMTP_PORT);
+		smtp::Mail			mail("matt-daemon-server@yopmail.com", "matt-daemon-client@yopmail.com", "Test", "Test");
+
+		g_global.logger.log(mail.toString());
+		g_global.logger.logInfo("Client " + std::to_string(fd) + " sent mail command.");
+		smtp.sendMail(mail);
+		g_global.logger.logInfo("Mail sent.");
+		return (true);
+	}
+	return (false);
+}
+
+
+static void	__readClient(Epoll &epoll, Clients &clients, int fd)
 {
 	ssl::SSocket::RecvData	data = clients[fd]->recv();
 
@@ -43,20 +68,17 @@ static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocke
 	else {
 		if (data.first.back() == '\n')
 			data.first.pop_back();
+		if (__doCommand(data.first, clients, fd) == true)
+			return ;
 		g_global.logger.log("Client " + std::to_string(fd) + ": " + data.first);
-		if (data.first == "quit") {
-			g_global.is_running = false;
-			__broadcast(clients, fd, "Server is shutting down.\n");
-		}
-		else
-			__broadcast(clients, fd, "Client " + std::to_string(fd) + ": " + data.first + "\n");
+		__broadcast(clients, fd, "Client " + std::to_string(fd) + ": " + data.first + "\n");
 	}
 }
 
 void	run_server(ssl::SSocket &server)
 {
 	Epoll	epoll;
-	std::map<int, std::shared_ptr<ssl::SSocket>>	clients;
+	Clients	clients;
 
 	epoll.subscribe(server.fd, EPOLLIN);
 	while (g_global.is_running == true)

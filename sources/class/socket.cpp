@@ -104,8 +104,10 @@ void	Socket::connect(const std::string &host, std::string port)
 	hints.ai_protocol = this->protocol;
 	if (getaddrinfo(host.c_str(), port.c_str(), &hints, &res) != 0)
 		throw std::runtime_error("getaddrinfo: " + std::string(gai_strerror(errno)));
-	if (::connect(this->fd, res->ai_addr, res->ai_addrlen) == -1)
+	if (::connect(this->fd, res->ai_addr, res->ai_addrlen) == -1) {
+		freeaddrinfo(res);
 		throw std::runtime_error("connect: " + std::string(strerror(errno)));
+	}
 	freeaddrinfo(res);
 }
 
