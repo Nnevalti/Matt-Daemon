@@ -23,6 +23,15 @@ static void	__removeClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSoc
 	g_global.logger.log("Client " + std::to_string(fd) + " disconnected.");
 }
 
+static void __broadcast(std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd, std::string const &msg)
+{
+	for (auto it = clients.begin(); it != clients.end(); ++it)
+	{
+		if (it->first != fd)
+			it->second->send(msg);
+	}
+}
+
 static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocket>> &clients, int fd)
 {
 	ssl::SSocket::RecvData	data = clients[fd]->recv();
@@ -33,15 +42,12 @@ static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocke
 		if (data.first.back() == '\n')
 			data.first.pop_back();
 		g_global.logger.log("Client " + std::to_string(fd) + ": " + data.first);
-		if (data.first == "quit")
+		if (data.first == "quit") {
 			g_global.is_running = false;
-		else {
-			for (auto it = clients.begin(); it != clients.end(); ++it)
-			{
-				if (it->first != fd)
-					it->second->send("Client " + std::to_string(fd) + ": " + data.first);
-			}
+			__broadcast(clients, fd, "Server is shutting down.");
 		}
+		else
+			__broadcast(clients, fd, "Client " + std::to_string(fd) + ": " + data.first);
 	}
 }
 
