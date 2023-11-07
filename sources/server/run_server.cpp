@@ -34,6 +34,14 @@ static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocke
 		g_global.logger.log("Client " + std::to_string(fd) + ": " + data.first);
 		if (data.first == "quit")
 			g_global.is_running = false;
+		else if (data.first == "mail") {
+			smtp::Smtp<Socket>	smtp(SMTP_SERVER, SMTP_PORT);
+			smtp::Mail			mail("matt-daemon-server@yopmail.com", "matt-daemon-client@yopmail.com", "Test", "Test");
+			g_global.logger.log(mail.toString());
+			g_global.logger.logInfo("Sending mail...");
+			smtp.sendMail(mail);
+			g_global.logger.logInfo("Mail sent.");
+		}
 	}
 }
 
