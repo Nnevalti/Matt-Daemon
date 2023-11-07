@@ -2,26 +2,27 @@
 
 namespace ssl
 {
-	void init()
+	void init(void)
 	{
 		SSL_load_error_strings();
 		SSL_library_init();
 		OpenSSL_add_all_algorithms();
 	}
 
-
-
-
-	SSLContext::SSLContext()
+	void cleanup(void)
 	{
-		this->_ctx = SSL_CTX_new(SSLv23_server_method());
+		EVP_cleanup();
+		ERR_free_strings();
+	}
+
+
+
+	SSLContext::SSLContext(const SSL_METHOD *method)
+	{
+		this->_ctx = SSL_CTX_new(method);
 		if (this->_ctx == nullptr)
 			throw std::runtime_error("SSL_CTX_new(): " + SSLErrorString);
 		this->setOptions(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
-		if(SSL_CTX_set_cipher_list(this->_ctx, "HIGH:!aNULL:!MD5") != 1) {
-			throw std::runtime_error("SSL_CTX_set_cipher_list(): " + SSLErrorString);
-		}
-
 	}
 
 	SSLContext::SSLContext(const SSLContext &instance)
@@ -29,15 +30,11 @@ namespace ssl
 		*this = instance;
 	}
 
-	SSLContext::SSLContext(const std::string &certificate, const std::string &privateKey)
+	SSLContext::SSLContext(const std::string &certificate, const std::string &privateKey, const SSL_METHOD *method)
 	{
-		this->_ctx = SSL_CTX_new(SSLv23_server_method());
+		this->_ctx = SSL_CTX_new(method);
 		if (this->_ctx == nullptr)
 			throw std::runtime_error("SSL_CTX_new(): " + SSLErrorString);
-		if(SSL_CTX_set_cipher_list(this->_ctx, "HIGH:!aNULL:!MD5") != 1) {
-			throw std::runtime_error("SSL_CTX_set_cipher_list(): " + SSLErrorString);
-		}
-
 		this->setOptions(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 		this->loadCertificate(certificate);
 		this->loadPrivateKey(privateKey);
@@ -79,7 +76,19 @@ namespace ssl
 		if (SSL_CTX_use_PrivateKey_file(this->_ctx, path.c_str(), SSL_FILETYPE_PEM) == 0)
 			throw std::runtime_error("SSL_CTX_use_PrivateKey_file(): " + SSLErrorString);
 		if (!SSL_CTX_check_private_key(this->_ctx))
-			throw std::runtime_error("Private key does not match the public certificate");
+			throw std::runtime_error("SSL_CTX_check_private_key(): " + SSLErrorString);
+	}
+
+	void SSLContext::loadCertificateAndPrivateKey(const std::string &certificate, const std::string &privateKey)
+	{
+		this->loadCertificate(certificate);
+		this->loadPrivateKey(privateKey);
+	}
+
+	void SSLContext::setCipherList(const std::string &cipherList)
+	{
+		if (SSL_CTX_set_cipher_list(this->_ctx, cipherList.c_str()) == 0)
+			throw std::runtime_error("SSL_CTX_set_cipher_list(): " + SSLErrorString);
 	}
 
 
@@ -88,10 +97,12 @@ namespace ssl
 
 
 
-	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol, int fd)
+	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol, int fd) : Socket(family, type, protocol, fd)
 	{
-		*this = SSocket(family, type, protocol, fd);
 		this->_ctx = ctx;
+		this->_ssl = SSL_new(this->_ctx.getCtx());
+		if (this->_ssl == nullptr)
+			throw std::runtime_error("SSL_new(): " + SSLErrorString);
 	}
 
 	SSocket::SSocket(int family, int type, int protocol, int fd) : Socket(family, type, protocol, fd)
@@ -110,8 +121,6 @@ namespace ssl
 	SSocket::~SSocket()
 	{
 		SSL_free(this->_ssl);
-		if (this->_bio != nullptr && _socketRefCounter.find(this->fd) == _socketRefCounter.end())
-			BIO_free(this->_bio);
 	}
 
 	SSocket &SSocket::operator=(const SSocket &instance)
@@ -120,7 +129,6 @@ namespace ssl
 			Socket::operator=(instance);
 			this->_ctx = instance._ctx;
 			this->_ssl = instance._ssl;
-			this->_bio = instance._bio;
 			SSL_up_ref(this->_ssl);
 		}
 		return (*this);
@@ -134,13 +142,12 @@ namespace ssl
 	SSocket	SSocket::accept(void)
 	{
 		int fd = ::accept(this->fd, NULL, NULL);
-		SSocket	client(this->family, this->type, this->protocol, fd);
 		if (fd == -1)
 			throw std::runtime_error("accept: " + std::string(strerror(errno)));
-		client.initBIO();
-		if (SSL_set_fd(this->_ssl, fd) == 0)
+		SSocket	client(this->_ctx, this->family, this->type, this->protocol, fd);
+		if (SSL_set_fd(client._ssl, client.fd) == 0)
 			throw std::runtime_error("SSL_set_fd(): " + SSLErrorString);
-		if (SSL_accept(this->_ssl) == -1)
+		if (SSL_accept(client._ssl) == -1)
 			throw std::runtime_error("SSL_accept(): " + SSLErrorString);
 		return (client);
 	}
@@ -207,13 +214,5 @@ namespace ssl
 		Socket::shutdown(how);
 		if (SSL_shutdown(this->_ssl) == -1)
 			throw std::runtime_error("SSL_shutdown(): " + SSLErrorString);
-	}
-
-	void	SSocket::initBIO(void)
-	{
-		this->_bio = BIO_new_socket(this->fd, BIO_CLOSE);
-		if (this->_bio == nullptr)
-			throw std::runtime_error("BIO_new_socket(): " + SSLErrorString);
-		SSL_set_bio(this->_ssl, this->_bio, this->_bio);
 	}
 }

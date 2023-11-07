@@ -10,7 +10,7 @@ t_glob g_global = {
 int main()
 {
 	ssl::init();
-	ssl::SSLContext	ctx(CERTIFICATE_PATH, PRIVATE_KEY_PATH);
+	ssl::SSLContext	ctx(CERTIFICATE_PATH, PRIVATE_KEY_PATH, SSLv23_server_method());
 	ssl::SSocket	server(ctx);
 
 	checkRoot();
@@ -26,9 +26,11 @@ int main()
 	}
 	catch (std::exception &e) {
 		g_global.logger.logError(e.what());
+		ssl::cleanup();
 		cleanup();
 		return (EXIT_FAILURE);
 	}
+	ssl::cleanup();
 	cleanup();
 	return (EXIT_SUCCESS);
 }
