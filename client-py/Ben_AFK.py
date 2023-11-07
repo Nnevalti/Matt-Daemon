@@ -27,7 +27,7 @@ def receive_messages(client_socket, chat_history):
                 status_label.config(bg="red")
                 break
             chat_history.config(state=tk.NORMAL)
-            chat_history.insert(tk.END, f'{message}')
+            chat_history.insert(tk.END, f"{message}\n")
             chat_history.config(state=tk.DISABLED)
         except Exception as e:
             print(f"Error receiving message: {e}")

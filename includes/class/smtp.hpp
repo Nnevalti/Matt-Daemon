@@ -60,7 +60,13 @@ namespace smtp
 			auto response = this->_socket.recv();
 			auto pos = response.first.find(std::to_string(expectedCode));
 			if (pos == std::string::npos)
-				throw std::runtime_error("SMTP error: " + response.first);
+				throw std::runtime_error("SMTP error: " + __trim(response.first));
+		}
+
+		std::string	__trim(std::string &str) {
+			str.erase(0, str.find_first_not_of(" \t\r\n"));
+			str.erase(str.find_last_not_of(" \t\r\n") + 1);
+			return (str);
 		}
 
 	public:
