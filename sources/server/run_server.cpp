@@ -30,10 +30,18 @@ static void	__readClient(Epoll &epoll, std::map<int, std::shared_ptr<ssl::SSocke
 	if (data.second == 0)
 		__removeClient(epoll, clients, fd);
 	else {
-		data.first.pop_back();
+		if (data.first.back() == '\n')
+			data.first.pop_back();
 		g_global.logger.log("Client " + std::to_string(fd) + ": " + data.first);
 		if (data.first == "quit")
 			g_global.is_running = false;
+		else {
+			for (auto it = clients.begin(); it != clients.end(); ++it)
+			{
+				if (it->first != fd)
+					it->second->send("Client " + std::to_string(fd) + ": " + data.first);
+			}
+		}
 	}
 }
 
