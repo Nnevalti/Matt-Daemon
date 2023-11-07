@@ -42,7 +42,7 @@ try:
     server_socket = socket.create_connection(('127.0.0.1', 4243))
     client_socket = context.wrap_socket(server_socket, server_hostname='server')
 except Exception as e:
-    messagebox.showerror("Error", f"Unable to connect to the server: Are you sure it is up and running ?\n {e}")
+    messagebox.showerror("Error", f"Unable to connect to the server:\nAre you sure it is up and running ?\n\nError: {e}")
     exit(1)
 
 def on_enter(event):
