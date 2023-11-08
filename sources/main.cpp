@@ -9,18 +9,29 @@ t_glob g_global = {
 
 int main()
 {
+	// checkRoot();
+	// daemonize();
 	ssl::init();
 	ssl::SSLContext	ctx(CERTIFICATE_PATH, PRIVATE_KEY_PATH, SSLv23_server_method());
 	ssl::SSocket	server(ctx);
 
-	checkRoot();
-	init_logger();
-	if (lock_file() == false)
+	try {
+		init_logger();
+	}
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		ssl::cleanup();
+		exit(EXIT_FAILURE);
+	}
+	if (lock_file() == false) {
+		ssl::cleanup();
 		return(EXIT_FAILURE);
+	}
+
 	try {
 		g_global.logger.logInfo("Started.");
 		init_server(server);
-		daemonize();
+		// daemonize();
 		init_signals();
 		run_server(server);
 	}

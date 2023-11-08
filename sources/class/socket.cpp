@@ -20,6 +20,7 @@ Socket::~Socket(void)
 {
 	if (this->_addrinfo != NULL && _socketRefCounter.find(this->fd) == _socketRefCounter.end())
 		freeaddrinfo(this->_addrinfo);
+	std::cerr << "Socket::~Socket(void)" << std::endl;
 	this->close();
 }
 
