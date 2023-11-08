@@ -93,7 +93,7 @@ namespace smtp
 			this->__checkResponse("DATA", START_MAIL_INPUT);
 
 			this->_socket.send(mail.toString() + "\r\n.\r\n");
-			this->__checkResponse("QUIT", CLOSING);
+			this->__checkResponse("QUIT", OK);
 		}
 
 		void sendMail(const std::string &from, const std::string &to, const std::string &subject, const std::string &body) {
