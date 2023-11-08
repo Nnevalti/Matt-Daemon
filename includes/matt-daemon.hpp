@@ -22,8 +22,8 @@
 #define PORT 4242
 #define LOCK_FILE "/var/lock/matt_daemon.lock"
 #define MAX_CLIENT 3
-#define CERTIFICATE_PATH "./matt-daemon.crt"
-#define PRIVATE_KEY_PATH "./matt-daemon.key"
+#define CERTIFICATE_PATH "/etc/ssl/certs/matt-daemon.crt"
+#define PRIVATE_KEY_PATH "/etc/ssl/private/matt-daemon.key"
 #define SMTP_SERVER "smtp.freesmtpservers.com"
 
 typedef struct glob {
