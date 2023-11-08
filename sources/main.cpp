@@ -28,10 +28,8 @@ int main()
 		run_server(server);
 	}
 	catch (std::exception &e) {
-		std::cerr << e.what() << std::endl;
 		g_global.logger.logError(e.what());
 	}
-
 	cleanup();
 	return (EXIT_SUCCESS);
 }

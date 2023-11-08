@@ -96,10 +96,8 @@ namespace ssl
 
 
 
-
-	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol, int fd) : Socket(family, type, protocol, fd)
+	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol, int fd) : Socket(family, type, protocol, fd), _ctx(ctx)
 	{
-		this->_ctx = ctx;
 		this->_ssl = SSL_new(this->_ctx.getCtx());
 		if (this->_ssl == nullptr)
 			throw std::runtime_error("SSL_new(): " + SSLErrorString);
