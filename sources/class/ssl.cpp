@@ -118,7 +118,6 @@ namespace ssl
 
 	SSocket::~SSocket()
 	{
-		SSL_shutdown(this->_ssl);
 		SSL_free(this->_ssl);
 	}
 
