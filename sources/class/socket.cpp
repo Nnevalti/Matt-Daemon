@@ -18,9 +18,9 @@ Socket::Socket(const Socket &instance) : _closed(false), _addrinfo(NULL), fd(-1)
 
 Socket::~Socket(void)
 {
+	this->close();
 	if (this->_addrinfo != NULL && _socketRefCounter.find(this->fd) == _socketRefCounter.end())
 		freeaddrinfo(this->_addrinfo);
-	this->close();
 }
 
 Socket	&Socket::operator=(const Socket &instance)
