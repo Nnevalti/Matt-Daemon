@@ -59,6 +59,7 @@ public:
 	virtual RecvData	recv(int flags = 0);
 	virtual ssize_t		recv(void *buffer, size_t size, int flags = 0);
 	void				close(void);
+	bool				isClosed(void);
 	void				setNonBlocking(void);
 	void				setBlocking(void);
 	void				setSockOpt(int level, int optname, int optval);

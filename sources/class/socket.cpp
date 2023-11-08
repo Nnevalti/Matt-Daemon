@@ -51,6 +51,12 @@ void	Socket::close(void)
 	}
 }
 
+bool	Socket::isClosed(void)
+{
+	return (this->_closed);
+}
+
+
 void	Socket::bind(std::string address, int port)
 {
 	this->bind(address, std::to_string(port));
