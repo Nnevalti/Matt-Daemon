@@ -25,7 +25,7 @@ namespace ssl
 		this->setOptions(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 	}
 
-	SSLContext::SSLContext(const SSLContext &instance)
+	SSLContext::SSLContext(const SSLContext &instance): _ctx(nullptr)
 	{
 		*this = instance;
 	}
@@ -53,6 +53,8 @@ namespace ssl
 	SSLContext &SSLContext::operator=(const SSLContext &instance)
 	{
 		if (this != &instance) {
+			if (this->_ctx != nullptr)
+				SSL_CTX_free(this->_ctx);
 			this->_ctx = instance._ctx;
 			SSL_CTX_up_ref(this->_ctx);
 		}
