@@ -9,8 +9,8 @@ t_glob g_global = {
 
 int main()
 {
-	// checkRoot();
-	// daemonize();
+	checkRoot();
+	daemonize();
 
 	try {
 		ssl::init();
