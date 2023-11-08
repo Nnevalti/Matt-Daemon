@@ -28,6 +28,9 @@ Socket	&Socket::operator=(const Socket &instance)
 	if (this == &instance)
 		return (*this);
 
+	this->close();
+	if (this->_addrinfo != NULL && _socketRefCounter.find(this->fd) == _socketRefCounter.end())
+		freeaddrinfo(this->_addrinfo);
 	this->_closed = instance._closed;
 	this->fd = instance.fd;
 	this->_addrinfo = instance._addrinfo;
@@ -41,7 +44,8 @@ Socket	&Socket::operator=(const Socket &instance)
 
 void	Socket::close(void)
 {
-	if (this->_closed == false) {
+	if (this->_closed == false && this->fd != -1)
+	{
 		this->__downRef();
 		if (_socketRefCounter.find(this->fd) == _socketRefCounter.end()) {
 			if (::close(this->fd) == -1)

@@ -4,13 +4,6 @@
 typedef typename std::map<int, std::shared_ptr<ssl::SSocket>> Clients;
 
 
-static void __cleanClients(Clients &Clients)
-{
-	for (auto it = Clients.begin(); it != Clients.end(); ++it)
-		if (it->second->isClosed())
-			it = Clients.erase(it);
-}
-
 static void __broadcast(Clients &clients, int fd, std::string const &msg)
 {
 	for (auto it = clients.begin(); it != clients.end(); ++it)
@@ -37,7 +30,7 @@ static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, Clients &clients)
 static void	__removeClient(Epoll &epoll, Clients &clients, int fd)
 {
 	epoll.unsubscribe(fd);
-	clients[fd]->close();
+	// clients[fd]->close();
 	clients.erase(fd);
 	g_global.logger.log("Client " + std::to_string(fd) + " disconnected.");
 	__broadcast(clients, fd, "Client " + std::to_string(fd) + " disconnected.");
@@ -106,5 +99,4 @@ void	run_server(ssl::SSocket &server)
 			}
 		}
 	}
-	__cleanClients(clients);
 }
