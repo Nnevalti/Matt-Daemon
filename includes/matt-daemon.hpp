@@ -24,7 +24,7 @@
 #define MAX_CLIENT 3
 #define CERTIFICATE_PATH "./matt-daemon.crt"
 #define PRIVATE_KEY_PATH "./matt-daemon.key"
-#define SMTP_SERVER "smtp.yopmail.com"
+#define SMTP_SERVER "smtp.freesmtpservers.com"
 
 typedef struct glob {
 	bool 			is_running;

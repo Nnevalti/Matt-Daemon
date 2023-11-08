@@ -48,7 +48,7 @@ static bool	__doCommand(std::string const &command, Clients &clients, int fd)
 	else if (command == "mail") {
 		try {
 			smtp::Smtp<Socket>	smtp(SMTP_SERVER, SMTP_PORT);
-			smtp::Mail			mail("matt-daemon-server@yopmail.com", "matt-daemon-client@yopmail.com", "Test", "Test");
+			smtp::Mail			mail("matt-daemon@test.com", "matt-daemon@test.com", "Test", "Test");
 
 			g_global.logger.logInfo("Client " + std::to_string(fd) + " sent mail command.");
 			g_global.logger.log("\n" + mail.toString());
