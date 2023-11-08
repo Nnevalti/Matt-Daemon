@@ -11,37 +11,27 @@ int main()
 {
 	// checkRoot();
 	// daemonize();
-	ssl::init();
-	ssl::SSLContext	ctx(CERTIFICATE_PATH, PRIVATE_KEY_PATH, SSLv23_server_method());
-	ssl::SSocket	server(ctx);
 
 	try {
+		ssl::init();
+		ssl::SSLContext	ctx(CERTIFICATE_PATH, PRIVATE_KEY_PATH, SSLv23_server_method());
+		ssl::SSocket	server(ctx);
+	
 		init_logger();
-	}
-	catch (std::exception &e) {
-		std::cerr << e.what() << std::endl;
-		ssl::cleanup();
-		exit(EXIT_FAILURE);
-	}
-	if (lock_file() == false) {
-		ssl::cleanup();
-		return(EXIT_FAILURE);
-	}
 
-	try {
+		if (lock_file() == false)
+			throw std::runtime_error("lock_file: " + std::string(strerror(errno)));
+
 		g_global.logger.logInfo("Started.");
 		init_server(server);
-		// daemonize();
 		init_signals();
 		run_server(server);
 	}
 	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
 		g_global.logger.logError(e.what());
-		ssl::cleanup();
-		cleanup();
-		return (EXIT_FAILURE);
 	}
-	ssl::cleanup();
+
 	cleanup();
 	return (EXIT_SUCCESS);
 }
