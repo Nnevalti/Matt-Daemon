@@ -19,6 +19,7 @@ Epoll::~Epoll()
 void	Epoll::subscribe(int fd, uint32_t events)
 {
 	epoll_event event;
+	bzero(&event, sizeof(event));
 	
 	if (this->_closed)
 		throw std::runtime_error("Epoll is closed");
@@ -40,6 +41,8 @@ void	Epoll::unsubscribe(int fd)
 void	Epoll::modify(int fd, uint32_t events)
 {
 	epoll_event event;
+	bzero(&event, sizeof(event));
+
 	
 	if (this->_closed)
 		throw std::runtime_error("Epoll is closed");
