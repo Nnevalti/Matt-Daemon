@@ -30,7 +30,7 @@ static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, Clients &clients)
 static void	__removeClient(Epoll &epoll, Clients &clients, int fd)
 {
 	epoll.unsubscribe(fd);
-	clients[fd]->close();
+	// clients[fd]->close();
 	clients.erase(fd);
 	g_global.logger.log("Client " + std::to_string(fd) + " disconnected.");
 	__broadcast(clients, fd, "Client " + std::to_string(fd) + " disconnected.");

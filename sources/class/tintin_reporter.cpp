@@ -23,7 +23,8 @@ TintinReporter &TintinReporter::operator=(TintinReporter const &instance) {
 void TintinReporter::openLogFile(void) {
 	this->_file = std::ofstream(LOG_FILE, std::ios_base::app);
 	if (!this->_file.is_open())
-		throw std::runtime_error("TintinReporter: Can't open log file. " + std::string(strerror(errno)));}
+		throw std::runtime_error("TintinReporter: Can't open log file. " + std::string(strerror(errno)));
+}
 
 void TintinReporter::log(const std::string &message, const LogType type) {
 	this->_file << getTime() << " " << this->_logTypeString[type] << " " << message << std::endl;

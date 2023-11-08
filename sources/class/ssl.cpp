@@ -25,7 +25,7 @@ namespace ssl
 		this->setOptions(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 	}
 
-	SSLContext::SSLContext(const SSLContext &instance)
+	SSLContext::SSLContext(const SSLContext &instance): _ctx(nullptr)
 	{
 		*this = instance;
 	}
@@ -53,6 +53,8 @@ namespace ssl
 	SSLContext &SSLContext::operator=(const SSLContext &instance)
 	{
 		if (this != &instance) {
+			if (this->_ctx != nullptr)
+				SSL_CTX_free(this->_ctx);
 			this->_ctx = instance._ctx;
 			SSL_CTX_up_ref(this->_ctx);
 		}
@@ -96,10 +98,8 @@ namespace ssl
 
 
 
-
-	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol, int fd) : Socket(family, type, protocol, fd)
+	SSocket::SSocket(SSLContext &ctx, int family, int type, int protocol, int fd) : Socket(family, type, protocol, fd), _ctx(ctx)
 	{
-		this->_ctx = ctx;
 		this->_ssl = SSL_new(this->_ctx.getCtx());
 		if (this->_ssl == nullptr)
 			throw std::runtime_error("SSL_new(): " + SSLErrorString);
