@@ -50,7 +50,7 @@ vpath %.cpp	$(addprefix $(SRCS_DIR), /. /class /utils /setup /server)
 all:
 	$(foreach LIB, ${LIBS}, ${MAKE} -C lib${LIB} ;)
 	$(MAKE) $(NAME)
-	openssl req -x509 -sha256 -days 356 -nodes -newkey rsa:2048 -subj "/CN=/C=FR/L=Paris" -keyout matt-daemon.key -out matt-daemon.crt
+	openssl req -x509 -sha256 -days 356 -nodes -newkey rsa:2048 -subj "/CN=/C=FR/L=Paris" -keyout /etc/ssl/private/matt-daemon.key -out /etc/ssl/certs/matt-daemon.crt
 
 
 scan:

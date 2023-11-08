@@ -9,15 +9,21 @@ t_glob g_global = {
 
 int main()
 {
-	checkRoot();
-	daemonize();
+	try {
+		checkRoot();
+		init_logger();
+		daemonize();
+	}
+	catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return (EXIT_FAILURE);
+	}
 
 	try {
 		ssl::init();
 		ssl::SSLContext	ctx(CERTIFICATE_PATH, PRIVATE_KEY_PATH, SSLv23_server_method());
 		ssl::SSocket	server(ctx);
 	
-		init_logger();
 
 		if (lock_file() == false)
 			throw std::runtime_error("lock_file: " + std::string(strerror(errno)));
