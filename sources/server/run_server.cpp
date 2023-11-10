@@ -18,7 +18,7 @@ static void	__acceptClient(ssl::SSocket &server, Epoll &epoll, Clients &clients)
 		epoll.subscribe(client->fd, EPOLLIN);
 		clients.insert(std::pair<int, std::shared_ptr<ssl::SSocket>>(client->fd, client));
 		g_global.logger.log("Client " + std::to_string(client->fd) + " connected.");
-		__broadcast(clients, client->fd, "Client " + std::to_string(client->fd) + " connected.");
+		__broadcast(clients, client->fd, "Client " + std::to_string(client->fd) + " connected.\n");
 	}
 	else {
 		client->send("Server is full.");
@@ -33,7 +33,7 @@ static void	__removeClient(Epoll &epoll, Clients &clients, int fd)
 	// clients[fd]->close();
 	clients.erase(fd);
 	g_global.logger.log("Client " + std::to_string(fd) + " disconnected.");
-	__broadcast(clients, fd, "Client " + std::to_string(fd) + " disconnected.");
+	__broadcast(clients, fd, "Client " + std::to_string(fd) + " disconnected.\n");
 }
 
 
@@ -41,7 +41,7 @@ static bool	__doCommand(std::string const &command, Clients &clients, int fd)
 {
 	if (command == "quit") {
 		g_global.logger.logInfo("Client " + std::to_string(fd) + " sent quit command.");
-		__broadcast(clients, fd, "Server is shutting down.");
+		__broadcast(clients, fd, "Server is shutting down.\n");
 		g_global.is_running = false;
 		return (true);
 	}
