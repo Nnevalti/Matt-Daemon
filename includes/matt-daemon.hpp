@@ -34,9 +34,16 @@ typedef struct glob {
 
 extern t_glob g_global;
 
+typedef typename std::map<int, std::shared_ptr<ssl::SSocket>> Clients;
+
 
 // Server
 void	run_server(ssl::SSocket &server);
+void	readClient(Epoll &epoll, Clients &clients, int fd);
+void	broadcast(Clients &clients, int fd, std::string const &msg);
+void	acceptClient(ssl::SSocket &server, Epoll &epoll, Clients &clients);
+void	removeClient(Epoll &epoll, Clients &clients, int fd);
+bool	doCommand(std::string const &command, Clients &clients, int fd);
 
 // Setup
 void	cleanup(void);

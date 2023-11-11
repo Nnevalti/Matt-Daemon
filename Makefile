@@ -21,6 +21,11 @@ _SETUP =	cleanup.cpp			\
 			init_server.cpp		\
 
 _SERVER =	run_server.cpp		\
+			read_client.cpp		\
+			broadcast.cpp		\
+			accept_client.cpp	\
+			remove_client.cpp	\
+			do_command.cpp		\
 
 
 OBJS = $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
