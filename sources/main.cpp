@@ -3,7 +3,7 @@
 t_glob g_global = {
 	.is_running = true,
 	.fd_lock = 0,
-	.logger = TintinReporter()
+	.logger = TintinReporter(LOG_FILE)
 };
 
 
@@ -11,7 +11,7 @@ int main()
 {
 	try {
 		checkRoot();
-		init_logger();
+		g_global.logger.openLogFile();
 		daemonize();
 	}
 	catch (std::exception &e) {

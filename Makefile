@@ -17,7 +17,6 @@ _UTILS =	signals.cpp			\
 			check_root.cpp		\
 
 _SETUP =	cleanup.cpp			\
-			init_logger.cpp		\
 			init_server.cpp		\
 
 _SERVER =	run_server.cpp		\

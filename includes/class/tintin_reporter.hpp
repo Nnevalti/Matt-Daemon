@@ -9,8 +9,6 @@
 #include <errno.h>
 #include <string.h>
 
-#define LOG_FILE "/var/log/matt_daemon.log"
-// #define LOG_FILE "/tmp/matt_daemon.log"
 
 #define COLOR_RESET std::string("\033[0m")
 #define COLOR_RED std::string("\033[0;31m")
@@ -18,9 +16,13 @@
 #define COLOR_YELLOW std::string("\033[0;33m")
 #define COLOR_BLUE std::string("\033[0;34m")
 
-class TintinReporter {
+class TintinReporter
+{
+private:
+	std::string _logFile;
+
 public:
-	explicit TintinReporter();
+	explicit TintinReporter(std::string const &logFile);
 	TintinReporter(TintinReporter const &instance);
 	~TintinReporter();
 

@@ -20,8 +20,9 @@
 #include "class/smtp.hpp"
 
 #define PORT 4242
-#define LOCK_FILE "/var/lock/matt_daemon.lock"
 #define MAX_CLIENT 3
+#define LOCK_FILE "/var/lock/matt_daemon.lock"
+#define LOG_FILE "/var/log/matt_daemon.log"
 #define CERTIFICATE_PATH "/etc/ssl/certs/matt-daemon.crt"
 #define PRIVATE_KEY_PATH "/etc/ssl/private/matt-daemon.key"
 #define SMTP_SERVER "smtp.freesmtpservers.com"
@@ -47,7 +48,6 @@ bool	doCommand(std::string const &command, Clients &clients, int fd);
 
 // Setup
 void	cleanup(void);
-void	init_logger(void);
 void	init_server(ssl::SSocket &server);
 
 

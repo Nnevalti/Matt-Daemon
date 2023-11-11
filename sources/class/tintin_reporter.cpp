@@ -1,6 +1,6 @@
 #include "class/tintin_reporter.hpp"
 
-TintinReporter::TintinReporter() {}
+TintinReporter::TintinReporter(std::string const &logFile): _logFile(logFile) {}
 
 TintinReporter::TintinReporter(TintinReporter const &instance) {
 	*this = instance;
@@ -13,15 +13,17 @@ TintinReporter::~TintinReporter() {
 TintinReporter &TintinReporter::operator=(TintinReporter const &instance) {
 	if (this != &instance)
 		return (*this);
+	
+	this->_logFile = instance._logFile;
 	if (instance._file.is_open()) {
-    	this->_file.open(LOG_FILE, std::ios_base::app);
+    	this->_file.open(this->_logFile, std::ios_base::app);
     	this->_file << instance._file.rdbuf();
 	}
 	return (*this);
 }
 
 void TintinReporter::openLogFile(void) {
-	this->_file = std::ofstream(LOG_FILE, std::ios_base::app);
+	this->_file = std::ofstream(this->_logFile, std::ios_base::app);
 	if (!this->_file.is_open())
 		throw std::runtime_error("TintinReporter: Can't open log file. " + std::string(strerror(errno)));
 }
