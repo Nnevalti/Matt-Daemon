@@ -9,7 +9,8 @@ from Spinner import Spinner
 
 # Define the server IP address
 SERVER_IP = '127.0.0.1'
-SERVER_PORT = 4243
+SERVER_PORT = 4242 # use this line by default
+# SERVER_PORT = 4243 # use this line with docker
 
 def send_message(client_socket, message):
     try:
