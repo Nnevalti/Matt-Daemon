@@ -8,6 +8,7 @@ void	signal_handler(int signum)
 		{SIGQUIT, "SIGQUIT"},
 		{SIGKILL, "SIGKILL"},
 		{SIGSTOP, "SIGSTOP"},
+		{SIGHUP, "SIGHUP"},
 	};
 
 	g_global.logger.logInfo("Signal " + msg[signum] + " received.");
@@ -22,4 +23,5 @@ void	init_signals(void)
 	signal(SIGQUIT, signal_handler);
 	signal(SIGKILL, signal_handler);
 	signal(SIGSTOP, signal_handler);
+	signal(SIGHUP, signal_handler);
 }

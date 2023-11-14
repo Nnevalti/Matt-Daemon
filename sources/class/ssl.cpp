@@ -63,22 +63,30 @@ namespace ssl
 
 	void SSLContext::setOptions(long options)
 	{
-		if (SSL_CTX_set_options(this->_ctx, options) == 0)
+		if (SSL_CTX_set_options(this->_ctx, options) == 0) {
+			SSL_CTX_free(this->_ctx);
 			throw std::runtime_error("SSL_CTX_set_options(): " + SSLErrorString);
+		}
 	}
 
 	void SSLContext::loadCertificate(const std::string &path)
 	{
-		if (SSL_CTX_use_certificate_file(this->_ctx, path.c_str(), SSL_FILETYPE_PEM) == 0)
+		if (SSL_CTX_use_certificate_file(this->_ctx, path.c_str(), SSL_FILETYPE_PEM) == 0) {
+			SSL_CTX_free(this->_ctx);
 			throw std::runtime_error("SSL_CTX_use_certificate_file(): " + SSLErrorString);
+		}
 	}
 
 	void SSLContext::loadPrivateKey(const std::string &path)
 	{
-		if (SSL_CTX_use_PrivateKey_file(this->_ctx, path.c_str(), SSL_FILETYPE_PEM) == 0)
+		if (SSL_CTX_use_PrivateKey_file(this->_ctx, path.c_str(), SSL_FILETYPE_PEM) == 0) {
+			SSL_CTX_free(this->_ctx);
 			throw std::runtime_error("SSL_CTX_use_PrivateKey_file(): " + SSLErrorString);
-		if (!SSL_CTX_check_private_key(this->_ctx))
+		}
+		if (!SSL_CTX_check_private_key(this->_ctx)) {
+			SSL_CTX_free(this->_ctx);
 			throw std::runtime_error("SSL_CTX_check_private_key(): " + SSLErrorString);
+		}
 	}
 
 	void SSLContext::loadCertificateAndPrivateKey(const std::string &certificate, const std::string &privateKey)
